@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<ul class="breadcrumbs" th:fragment="breadcrumps">
+    <li class="breadcrumbs-item"><a th:href="@{/}" href="/index.html">Главная</a>
+    </li>
+    <li class="breadcrumbs-item"><a th:href="@{/genres/index}" href="/genres/index.html">Книги</a>
+    </li>
+    <li class="breadcrumbs-item breadcrumbs-item_current" th:text="${category}"><span>Новинки</span>
+    </li>
+</ul>
+</html>

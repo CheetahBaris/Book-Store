@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Тут название страницы написать</title>
+    <meta name="description" content="Описание страницы">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link href="favicon.ico" rel="shortcut icon">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-SemiBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Light.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Medium.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-ExtraBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/fonts.min.css?v=27449092">
+    <link rel="stylesheet" href="/assets/css/basic.min.css?v=27449092">
+    <link rel="stylesheet" href="/assets/css/extra.min.css?v=27449092">
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script defer src="/assets/js/scripts.min.js?v=27449092"></script>
+</head>
+<body class="Site">
+<header class="Header"
+        th:replace="~{fragments/common_header_fragment :: head(status='unauthorized')}"></header>
+<div class="Middle Middle_form">
+    <div class="Middle-top">
+        <div class="wrap">
+            <h1 class="Middle-title">Вход
+            </h1>
+        </div>
+    </div>
+    <div class="wrap">
+        <main class="Middle-main">
+            <form class="form Login" action="#" method="post">
+                <div class="Login-ins">
+                    <div class="Login-step">
+                        <div class="form-group">
+                            <label class="form-label Login-title">Введите e-mail или телефон
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="row-block">
+                                    <label class="toggle Login-type">
+                                        <input type="radio" name="typeauth" value="phonetype" checked="checked"/><span
+                                            class="toggle-box"></span><span class="toggle-text">Телефон</span>
+                                    </label>
+                                </div>
+                                <div class="row-block">
+                                    <label class="toggle Login-type">
+                                        <input type="radio" name="typeauth" value="mailtype"/><span
+                                            class="toggle-box"></span><span class="toggle-text">E-mail</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-input form-input_phone" id="phone" name="phone" type="text"
+                                   placeholder="Введите телефон" data-mask="+7 (999) 999-99-99"
+                                   data-validate="require"/>
+                            <input class="form-input form-input_mail" id="mail" name="mail" type="text"
+                                   placeholder="Введите e-mail" data-validate="mail require"/>
+                        </div>
+                        <div class="form-group form-group_center">
+                            <button class="btn btn_primary form-btn" type="button" name="sendauth" id="sendauth"
+                                    data-type="phone" data-send="">Далее
+                            </button>
+                        </div>
+                    </div>
+                    <div class="Login-step Login-step_hide" data-type="phone">
+                        <div class="form-group">
+                            <label class="form-label Login-title">На&nbsp;Ваш телефон отправлено сообщение с&nbsp;кодом
+                                для входа. Введите его:
+                            </label>
+                        </div>
+                        <div class="form-group form-group_key">
+                            <input class="form-input" id="phonecode" name="phonecode" type="text" placeholder="Код"
+                                   data-validate="key require" data-mask="999 999"/>
+                        </div>
+                        <div class="form-group form-group_center">
+                            <button class="btn btn_primary form-btn" type="button" name="toComeInPhone"
+                                    id="toComeInPhone" data-send="">Войти
+                            </button>
+                        </div>
+                    </div>
+                    <div class="Login-step Login-step_hide" data-type="mail">
+                        <div class="form-group">
+                            <label class="form-label Login-title">На&nbsp;Ваш e-mail отправлена ссылка для входа и&nbsp;код.
+                                Перейдите по&nbsp;ссылке или введите код ниже:
+                            </label>
+                        </div>
+                        <div class="form-group form-group_key">
+                            <input class="form-input" id="mailcode" name="mailcode" type="text" placeholder="Код"
+                                   data-validate="key require" data-mask="999 999"/>
+                        </div>
+                        <div class="form-group form-group_center">
+                            <button class="btn btn_primary form-btn" type="button" name="toComeInMail" id="toComeInMail"
+                                    data-send="">Войти
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group form-group_center"><a class="Login-reg" href="/signup.html">Зарегистрироваться</a>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<footer class="Footer" th:replace="~{fragments/common_footer_fragment :: footer}"></footer>
+<script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+</body>
+</html>

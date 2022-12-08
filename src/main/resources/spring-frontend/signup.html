@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Тут название страницы написать</title>
+    <meta name="description" content="Описание страницы">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link href="favicon.ico" rel="shortcut icon">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-SemiBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Light.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Medium.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-ExtraBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/fonts.min.css?v=65675850">
+    <link rel="stylesheet" href="/assets/css/basic.min.css?v=65675850">
+    <link rel="stylesheet" href="/assets/css/extra.min.css?v=65675850">
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script defer src="/assets/js/scripts.min.js?v=65675850"></script>
+</head>
+<body class="Site">
+<header class="Header"
+        th:replace="~{fragments/common_header_fragment :: head(status='unauthorized')}"></header>
+<div class="Middle Middle_form">
+    <div class="Middle-top">
+        <div class="wrap">
+            <h1 class="Middle-title">Регистрация
+            </h1>
+        </div>
+    </div>
+    <div class="wrap">
+        <main class="Middle-main">
+            <form class="form Login Login_registration" action="#" method="post">
+                <div class="Login-ins">
+                    <div class="Login-step">
+                        <div class="form-group">
+                            <input class="form-input" id="name" name="name" type="text" placeholder="Введите Имя"
+                                   data-validate="require"/>
+                        </div>
+                        <div class="form-group form-group_row">
+                            <div class="form-group">
+                                <input class="form-input form-input_phone" id="phone" name="phone" type="text"
+                                       placeholder="Введите телефон" data-mask="+7 (999) 999-99-99"
+                                       data-validate="require"/>
+                            </div>
+                            <div class="form-group form-group_key">
+                                <input class="form-input form-input_code" id="phoneCode" name="phoneCode" type="text"
+                                       placeholder="Код из СМС" data-mask="999 999" data-validate="require key"/>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn_success btn_sm form-btn" type="button" name="submitPhone"
+                                        disabled="disabled" id="submitPhone">Подтвердить
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group form-group_row">
+                            <div class="form-group">
+                                <input class="form-input form-input_mail" id="mail" name="mail" type="text"
+                                       placeholder="Введите e-mail" data-validate="mail require"/>
+                            </div>
+                            <div class="form-group form-group_key">
+                                <input class="form-input form-input_code" id="mailCode" name="mailCode" type="text"
+                                       placeholder="Код из письма" data-mask="999 999" data-validate="require key"/>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn_success btn_sm form-btn" type="button" name="submitMail"
+                                        disabled="disabled" id="submitMail">Подтвердить
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group form-group_center">
+                            <button class="btn btn_primary form-btn" type="button" name="registration" id="registration"
+                                    disabled="disabled">Зарегистрироваться
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<footer class="Footer" th:replace="~{fragments/common_footer_fragment :: footer}"></footer>
+<script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+</body>
+</html>

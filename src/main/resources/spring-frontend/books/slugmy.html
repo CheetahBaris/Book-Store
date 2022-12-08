@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Тут название страницы написать</title>
+    <meta name="description" content="Описание страницы">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <link href="favicon.ico" rel="shortcut icon">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-SemiBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Light.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-Medium.woff2" as="font" crossorigin="anonymous">
+    <link rel="preload" href="/assets/fonts/Montserrat/Montserrat-ExtraBold.woff2" as="font" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/fonts.min.css?v=79103183">
+    <link rel="stylesheet" href="/assets/css/basic.min.css?v=79103183">
+    <link rel="stylesheet" href="/assets/css/extra.min.css?v=79103183">
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script defer src="/assets/js/scripts.min.js?v=79103183"></script>
+</head>
+<body class="Site">
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head(status='authorized')}"></header>
+<div class="Middle">
+    <div class="wrap">
+        <main class="Middle-main">
+            <ul class="breadcrumbs"
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Мара и Морок')}"></ul>
+            <div class="Product">
+                <div class="ProductCard">
+                    <div class="ProductCard-look">
+                        <div class="ProductCard-photo"><img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                        </div>
+                    </div>
+                    <div class="ProductCard-desc" th:replace="~{fragments/book_description_fragment :: bookDesc}"></div>
+                </div>
+                <div class="Product-comments">
+                    <div class="Product-comments-header">
+                        <h3 class="Product-comments-title">Отзывы
+                        </h3><span class="Rating"><span class="Rating-stars"><span class="Rating-star Rating-star_view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span class="Rating-star Rating-star_view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span class="Rating-star Rating-star_view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span class="Rating-star Rating-star_view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span><span class="Rating-star Rating-star_view">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
+                      <g>
+                        <g>
+                          <path fill="#ffc000"
+                                d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
+                        </g>
+                      </g>
+                    </svg></span></span><span class="Rating-title">567 отзывов</span></span>
+                    </div>
+                </div>
+                <strong class="Comments-title">Написать отзыв
+                </strong>
+                <div class="Comments-addComment">
+                    <form class="form" action="#" method="post" data-bookid="1111">
+                        <div class="form-group">
+                                <textarea class="form-textarea Comments-review" name="review" id="review"
+                                          placeholder="Текст отзыва" data-validate="require"></textarea>
+                        </div>
+                        <div class="form-group Comments-sendReview">
+                            <button class="btn btn_warning" type="submit">Отправить отзыв
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div th:replace="~{fragments/book_reviews_fragment :: reviewBlock}"></div>
+            </div>
+        </main>
+    </div>
+</div>
+<footer class="Footer" th:replace="~{fragments/common_footer_fragment :: footer}"></footer>
+<script src="/assets/plg/jQuery/jquery-3.5.1.min.js"></script>
+</body>
+</html>
