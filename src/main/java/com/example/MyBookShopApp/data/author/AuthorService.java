@@ -19,7 +19,7 @@ public class AuthorService {
 
         public Map<String, List<AuthorEntity>> getAuthorsMap() {
         return authorEntityCrudRepository.findAll().stream().collect(Collectors.groupingBy((AuthorEntity a) ->
-        {return a.getLast_name().substring(0,1);}));
+        {return a.getLastName().substring(0,1);}));
 
     }
     public AuthorEntity getAuthorById(Long id){
@@ -33,8 +33,8 @@ public class AuthorService {
         if(authorEntityCrudRepository.existsById(id)){
 
             AuthorEntity a = authorEntityCrudRepository.findById(id).get();
-            a.setFirst_name(first_name);
-            a.setLast_name(last_name);
+            a.setFirstName(first_name);
+            a.setLastName(last_name);
             authorEntityCrudRepository.save(a);
             return true;
 
@@ -46,8 +46,8 @@ public class AuthorService {
 
     public  void crateAuthor(String first_name, String last_name){
         AuthorEntity a = new AuthorEntity();
-        a.setFirst_name(first_name);
-        a.setLast_name(last_name);
+        a.setFirstName(first_name);
+        a.setLastName(last_name);
         authorEntityCrudRepository.save(a);
      }
     public void deleteAllAuthors(){

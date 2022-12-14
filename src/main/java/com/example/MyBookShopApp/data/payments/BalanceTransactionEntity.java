@@ -25,9 +25,9 @@ public class BalanceTransactionEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userId;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "book_id",referencedColumnName = "id")
-    private List<BookEntity> bookId;
+    private  BookEntity bookId;
 
     @Column(columnDefinition = "TEXT NOT NULL")
     private String description;
@@ -49,11 +49,11 @@ public class BalanceTransactionEntity {
         this.userId = userId;
     }
 
-    public List<BookEntity> getBookId() {
+    public BookEntity getBookId() {
         return bookId;
     }
 
-    public void setBookId(List<BookEntity> bookId) {
+    public void setBookId(BookEntity bookId) {
         this.bookId = bookId;
     }
 

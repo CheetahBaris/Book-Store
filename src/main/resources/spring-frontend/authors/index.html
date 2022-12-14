@@ -38,7 +38,7 @@
                         </h2>
                         <div class="Authors-letter">
                             <div class="Authors-item"  th:each="authorEntity : ${authorsList.value}">
-                                <h href="/authors/slug.html"  th:text="${authorEntity.getLast_name() + ' ' +authorEntity.getFirst_name()}">
+                                <h href="/authors/slug.html"  th:text="${authorEntity.getLastName() + ' ' +authorEntity.getFirstName()}">
                                     Абгарян Наринэ
                                 </h>
                             </div>
