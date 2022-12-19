@@ -12,33 +12,32 @@ public class GenreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(columnDefinition = "INT")
-    private int parentId;
+    private Long parentId;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String slug;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String name;
-    @OneToOne(mappedBy = "genreId")
-    private Book2GenreEntity book2GenreEntity;
 
 
-    public int getId() {
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getParentId() {
+    public Long getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(Long parentId) {
         this.parentId = parentId;
     }
 

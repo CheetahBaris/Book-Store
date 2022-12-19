@@ -39,5 +39,11 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
     @Query(value = "SELECT * FROM books ORDER BY relevance DESC ", nativeQuery = true)
     Page<BookEntity> getBookEntityFromRelevance(Pageable nextPage);
 
+    Page<BookEntity> findBookEntitiesByTag(String tag, Pageable nextPage);
+
+//     Page<BookEntity> findAllById(Iterable<Long> longs, Pageable nextPage);
+
+    //    Page<BookEntity> findAllBy(List<Long> id, Pageable nextPage);
+
 
 }

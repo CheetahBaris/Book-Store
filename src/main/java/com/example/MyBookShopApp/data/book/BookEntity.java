@@ -1,21 +1,12 @@
 package com.example.MyBookShopApp.data.book;
 
 import com.example.MyBookShopApp.data.author.AuthorEntity;
-import com.example.MyBookShopApp.data.book.file.FileDownloadEntity;
-import com.example.MyBookShopApp.data.book.links.Book2AuthorEntity;
-import com.example.MyBookShopApp.data.book.links.Book2GenreEntity;
-import com.example.MyBookShopApp.data.book.links.Book2UserEntity;
-import com.example.MyBookShopApp.data.book.review.BookReviewEntity;
-import com.example.MyBookShopApp.data.payments.BalanceTransactionEntity;
-import com.example.MyBookShopApp.data.user.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -58,33 +49,10 @@ public class BookEntity {
     @Column(name = "relevance")
     @JsonIgnore
     private Double relevance;
-//    @ManyToMany
-//    @JoinTable( name="book2user",
-//            joinColumns= @JoinColumn(name="book_id", referencedColumnName="id"),
-//            inverseJoinColumns= @JoinColumn(name="user_id", referencedColumnName="id" ))
-//    public List<UserEntity> users;
-
-
-//    @OneToOne(mappedBy = "bookId")
-//    @JsonIgnore
-//    private Book2AuthorEntity book2AuthorEntity;
-//    @ManyToOne
-//    @JsonIgnore
-//    private Book2GenreEntity book2GenreEntity;
-//    @ManyToOne
-//    @JsonIgnore
-//    private Book2UserEntity book2UserEntity;
-//    @ManyToOne
-//    @JsonIgnore
-//    private FileDownloadEntity fileDownloadEntity;
-//    @ManyToOne
-//    @JsonIgnore
-//    private BalanceTransactionEntity balanceTransactionEntity;
-//    @OneToOne(mappedBy = "bookId")
-//    @JsonIgnore
-//    private BookReviewEntity bookReviewEntity;
-
-
+    @Column(columnDefinition = "VARCHAR(225)")
+    @JsonIgnore
+    private String tag; // Children's, Classic, Coming-of-age, Epic, Fabulation, Folklore, Historical,
+                        // Meta, Nonsense, Paranoid, Philosophical, Pop culture,  Religious, Young adult
 
     public Long getId() {
         return id;
@@ -173,52 +141,12 @@ public class BookEntity {
     public void setRelevance(Double relevance) {
         this.relevance = relevance;
     }
-    //    public Book2AuthorEntity getBook2AuthorEntity() {
-//        return book2AuthorEntity;
-//    }
-//
-//    public void setBook2AuthorEntity(Book2AuthorEntity book2AuthorEntity) {
-//        this.book2AuthorEntity = book2AuthorEntity;
-//    }
-//
-//    public Book2GenreEntity getBook2GenreEntity() {
-//        return book2GenreEntity;
-//    }
-//
-//    public void setBook2GenreEntity(Book2GenreEntity book2GenreEntity) {
-//        this.book2GenreEntity = book2GenreEntity;
-//    }
-//
-//    public Book2UserEntity getBook2UserEntity() {
-//        return book2UserEntity;
-//    }
-//
-//    public void setBook2UserEntity(Book2UserEntity book2UserEntity) {
-//        this.book2UserEntity = book2UserEntity;
-//    }
-//
-//    public FileDownloadEntity getFileDownloadEntity() {
-//        return fileDownloadEntity;
-//    }
-//
-//    public void setFileDownloadEntity(FileDownloadEntity fileDownloadEntity) {
-//        this.fileDownloadEntity = fileDownloadEntity;
-//    }
-//
-//    public BalanceTransactionEntity getBalanceTransactionEntity() {
-//        return balanceTransactionEntity;
-//    }
-//
-//    public void setBalanceTransactionEntity(BalanceTransactionEntity balanceTransactionEntity) {
-//        this.balanceTransactionEntity = balanceTransactionEntity;
-//    }
-//
-//    public BookReviewEntity getBookReviewEntity() {
-//        return bookReviewEntity;
-//    }
-//
-//    public void setBookReviewEntity(BookReviewEntity bookReviewEntity) {
-//        this.bookReviewEntity = bookReviewEntity;
-//    }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 }

@@ -1,11 +1,15 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.services.BookService;
 import com.example.MyBookShopApp.data.book.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 
+import com.example.MyBookShopApp.data.genre.serices.GenreService;
+import liquibase.pro.packaged.B;
+import liquibase.pro.packaged.G;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class MainPageController {
@@ -24,16 +27,37 @@ public class MainPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
 
+    private final GenreService genreService;
     @Autowired
-    public MainPageController(BookService bookService,  BooksRatingAndPopularityService booksRatingAndPopularityService ) {
+    public MainPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
+                              GenreService genreService) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
+        this.genreService = genreService;
     }
 
     @ModelAttribute("booksListFull")
     public List<BookEntity> bookListFull(){
         return bookService.getBooksData();
     }
+    @ModelAttribute("tagListMap")
+    public Map<String,List<BookEntity>> tagListMap(){
+
+         return bookService.getTagListMap();
+    }
+    @ModelAttribute("tagListMapLgSize")
+    public Integer tagListMapLg(){
+        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
+                .max(Comparator.comparing(List::size)).get();
+        return bigList.size();
+    }
+    @ModelAttribute("tagListMapXsSize")
+    public Integer tagListMapXs(){
+        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
+                .min(Comparator.comparing(List::size)).get();
+        return bigList.size();
+    }
+
     @ModelAttribute("booksList")
     public List<BookEntity> bookList(){
         return bookService.getPageOfRecommendedBooks(0, 20).getContent();
@@ -147,6 +171,52 @@ public class MainPageController {
                                           @PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto) {
         return new BooksPageDto(bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), offset, limit).getContent());
     }
+
+    @GetMapping("/books/tags")
+    public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
+                                 @RequestParam(value = "limit", required = false) Integer limit ,Model model){
+        model.addAttribute("tagListMap", tagListMap());
+        model.addAttribute("map",
+                bookService.findBookEntitiesByTagPage(tag, 0, 20).getContent());
+        return "/tags/index.html";
+    }
+    @GetMapping("/books/page/tags")
+    @ResponseBody
+    public BooksPageDto getBookTagPage(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
+                                           @RequestParam(value = "limit", required = false) Integer limit){
+
+
+        return new BooksPageDto(bookService.findBookEntitiesByTagPage(tag,offset,limit).getContent());
+    }
+    @GetMapping("/genres")
+    public String getGenres(Model model){
+
+        model.addAttribute("GenresParentList", genreService.findGenreEntitiesByParentId(0L));
+//        model.addAttribute("GenresFictionList", genreService.findGenreEntitiesByParentId(2));
+//        model.addAttribute("GenresNonfictionList", genreService.findGenreEntitiesByParentId(3));
+        model.addAttribute("AllGenresList", genreService.getAllGenres());
+
+        return "/genres/index.html";
+    }
+    @GetMapping("books/genres")
+    public String getBooksByGenreSlug(@RequestParam(value = "genre", required = false) String genre, Model model){
+
+        List<BookEntity> GenreList = genreService.getBooksPageByGenre(genre,0,20).getContent();
+
+        model.addAttribute("GenresList", GenreList);
+        model.addAttribute("GenreTag", genre);
+
+        return "/genres/slug.html";
+    }
+    @GetMapping("books/page/genres")
+    @ResponseBody
+    public BooksPageDto getBooksByGenre(@RequestParam(value = "genre", required = false) String genre,  @RequestParam(value = "offset", required = false) Integer offset,
+                                  @RequestParam(value = "limit", required = false) Integer limit){
+
+
+        return new BooksPageDto(genreService.getBooksPageByGenre(genre,offset,limit).getContent());
+    }
+
 
     @GetMapping("/postponed")
     public String getPostponedPage() {

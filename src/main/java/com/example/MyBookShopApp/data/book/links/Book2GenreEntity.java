@@ -12,21 +12,21 @@ public class Book2GenreEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private BookEntity bookId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
     private GenreEntity genreId;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

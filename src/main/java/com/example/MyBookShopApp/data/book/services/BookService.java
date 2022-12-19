@@ -1,18 +1,18 @@
 package com.example.MyBookShopApp.data.book.services;
 
+import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.repositories.BookRepository;
 import com.example.MyBookShopApp.data.book.repositories.BookToUserRepository;
+import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -70,6 +70,17 @@ public class BookService {
          Pageable nextPage = PageRequest.of(offset,limit);
         return bookRepository.findBookByPubDateBetween(fromDateRecent,endDateRecent, nextPage);
     }
+
+    public Page<BookEntity> findBookEntitiesByTagPage(String tag, Integer offset, Integer limit){
+        Pageable nextPage = PageRequest.of(offset,limit);
+
+
+        return bookRepository.findBookEntitiesByTag(tag, nextPage);
+    }
+    public Map<String, List<BookEntity>> getTagListMap(){
+
+        return bookRepository.findAll().stream().collect(Collectors.groupingBy(BookEntity::getTag));
+     }
 
 //    public void getPageOfBooksByRating(){
 //

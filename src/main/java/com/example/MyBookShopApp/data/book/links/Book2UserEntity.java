@@ -70,4 +70,5 @@ public class Book2UserEntity {
     public void setUserId(UserEntity userId) {
         this.userId = userId;
     }
+
 }
