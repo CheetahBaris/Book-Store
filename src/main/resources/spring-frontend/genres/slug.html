@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Тут название страницы написать</title>
+    <title th:text="${GenreTag}"></title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -23,14 +23,14 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Детективы')}"></ul>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${GenreTag})}"></ul>
             <header class="Middle-header">
-                <h1 class="Middle-title">Детективы
+                <h1 class="Middle-title" th:text="${GenreTag}">Детективы
                 </h1>
             </header>
             <div class="Section">
                 <div class="Cards Cards_refresh"
-                     th:replace="~{fragments/books_pool_fragment :: pool(category='genre')}"></div>
+                     th:replace="~{fragments/books_pool_fragment :: pool(category='genre&'+${GenreTag})}"></div>
             </div>
         </main>
     </div>
