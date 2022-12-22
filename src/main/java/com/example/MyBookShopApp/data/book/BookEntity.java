@@ -50,6 +50,7 @@ public class BookEntity {
     private String tag; // Children's, Classic, Coming-of-age, Epic, Fabulation, Folklore, Historical,
                         // Meta, Nonsense, Paranoid, Philosophical, Pop culture,  Religious, Young adult
 
+    private String authorsNames;
     public Long getId() {
         return id;
     }
@@ -136,5 +137,13 @@ public class BookEntity {
 
     public void setTag(String tag) {
         this.tag = tag;
+    }
+
+    public String getAuthorsNames() {
+        return authorsNames;
+    }
+
+    public void setAuthorsNames(String authorsNames) {
+        this.authorsNames = authorsNames;
     }
 }

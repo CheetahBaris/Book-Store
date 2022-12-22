@@ -205,7 +205,8 @@ public class MainPageController {
     public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
                                  @RequestParam(value = "limit", required = false) Integer limit ,Model model){
         model.addAttribute("tagListMap", tagListMap());
-        model.addAttribute("map", bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent());
+        model.addAttribute("map",authorService.converterListToMapWithAuthors(
+                bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(),0, 10));
         model.addAttribute("TagName",tag);
         return "/tags/index.html";
     }
@@ -216,6 +217,8 @@ public class MainPageController {
 
 
         return new BooksPageDto(bookService.findBookEntitiesByTagPage(tag,offset+1,limit).getContent());
+//        return new BooksPageDto(authorService.converterListToMapWithAuthors(
+//                bookService.findBookEntitiesByTagPage(tag, offset+1, 10).getContent(),offset+1, 10));
     }
     @GetMapping("/genres")
     public String getGenres(Model model){
@@ -264,16 +267,18 @@ public class MainPageController {
     @ResponseBody
     public BooksPageDto getAuthorsPage(@RequestParam(value = "author", required = false) String author,
                                        @RequestParam(value = "offset", required = false) Integer offset,
-                                        @RequestParam(value = "limit", required = false) Integer limit, Model model){
+                                        @RequestParam(value = "limit", required = false) Integer limit){
 
 //        model.addAttribute("Author",authorService.findAuthorEntitiesByName(author));
+//        return new BooksPageDto(authorService.getBookEntitiesByAuthorName(author,offset+1,limit)).setMap();
         return new BooksPageDto(authorService.getBookEntitiesByAuthorName(author,offset+1,limit));
+
     }
     @GetMapping("books/authorEntity")
     public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author, Model model){
 
         model.addAttribute("AuthorsBooksList",
-                authorService.getBooksWithAuthor(author,0,10));
+                authorService.getBookEntitiesByAuthorName(author,0,10));
          model.addAttribute("Author",authorService.findAuthorEntitiesByName(author));
 
         return "/books/author.html";

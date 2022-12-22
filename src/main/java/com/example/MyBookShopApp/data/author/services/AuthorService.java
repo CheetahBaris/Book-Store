@@ -52,43 +52,63 @@ public class AuthorService {
 
 
 
-    public Map<String,BookEntity> getBooksWithAuthor(String name, Integer offset, Integer limit){
+//    public Map<String,BookEntity> getBooksWithAuthor(String name, Integer offset, Integer limit){
+//
+//        List<Book2AuthorEntity> book2AuthorEntities = bookToAuthorRepository.findBook2AuthorEntitiesByAuthorId(
+//                authorEntityRepository.findAuthorEntitiesByName(name));
+//
+//        HashMap<String,BookEntity> bookIds = new HashMap<>();
+//
+//        for (int i=0; i<book2AuthorEntities.size();i++){
+//            StringBuilder authorBuilder = new StringBuilder();
+//            for (Book2AuthorEntity b: bookToAuthorRepository.findBook2AuthorEntitiesByBookId(book2AuthorEntities.get(i).getBookId())){
+//                authorBuilder.append(b.getAuthorId().getName()).append(", ");
+//            }
+//            bookIds.put(authorBuilder.toString(),book2AuthorEntities.get(i).getBookId());
+//
+//        }
+//
+//        PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(new ArrayList<>(bookIds.values()));
+//        pagedListHolder.setPageSize(limit);
+//        pagedListHolder.setPage(offset);
+//        HashMap<String,BookEntity> bookIds1 = new HashMap<>();
+//
+//        for(int i=0;i<pagedListHolder.getPageList().size();i++){
+//            for(Map.Entry<String, BookEntity> entityEntry: bookIds.entrySet()){
+//                if(entityEntry.getValue().equals(pagedListHolder.getPageList().get(i))){
+//
+//                    bookIds1.put(entityEntry.getKey().substring(0,entityEntry.getKey().trim().length()-1),
+//                            pagedListHolder.getPageList().get(i));
+//                }
+//            }
+//        }
+//
+//        return  bookIds1;
+//    }
+    public List<BookEntity> converterListToMapWithAuthors(List<BookEntity> bookEntityList, Integer offset, Integer limit){
 
-        List<Book2AuthorEntity> book2AuthorEntities = bookToAuthorRepository.findBook2AuthorEntitiesByAuthorId(
-                authorEntityRepository.findAuthorEntitiesByName(name));
 
         HashMap<String,BookEntity> bookIds = new HashMap<>();
 
-        for (int i=0; i<book2AuthorEntities.size();i++){
+        for (int i=0; i<bookEntityList.size();i++){
             StringBuilder authorBuilder = new StringBuilder();
-            for (Book2AuthorEntity b: bookToAuthorRepository.findBook2AuthorEntitiesByBookId(book2AuthorEntities.get(i).getBookId())){
+            for (Book2AuthorEntity b: bookToAuthorRepository.findBook2AuthorEntitiesByBookId(bookEntityList.get(i))){
                 authorBuilder.append(b.getAuthorId().getName()).append(", ");
             }
-            bookIds.put(authorBuilder.toString(),book2AuthorEntities.get(i).getBookId());
+            bookEntityList.get(i).setAuthorsNames(authorBuilder.substring(0,authorBuilder.toString().trim().length()-1));
+            bookRepository.save(bookEntityList.get(i));
+            bookIds.put(authorBuilder.toString(),bookEntityList.get(i));
 
         }
 
         PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(new ArrayList<>(bookIds.values()));
         pagedListHolder.setPageSize(limit);
         pagedListHolder.setPage(offset);
-        HashMap<String,BookEntity> bookIds1 = new HashMap<>();
 
-        for(int i=0;i<pagedListHolder.getPageList().size();i++){
-            for(Map.Entry<String, BookEntity> entityEntry: bookIds.entrySet()){
-                if(entityEntry.getValue().equals(pagedListHolder.getPageList().get(i))){
-
-                    bookIds1.put(entityEntry.getKey().substring(0,entityEntry.getKey().trim().length()-1),
-                            pagedListHolder.getPageList().get(i));
-                }
-            }
-        }
-
-        return  bookIds1;
+        return  pagedListHolder.getPageList();
     }
 
     public List<BookEntity> getBookEntitiesByAuthorName(String name, Integer offset, Integer limit){
-//        Pageable nextPage = PageRequest.of(offset, limit);
-//        authorEntityRepository.findAuthorEntitiesByName(name);
 
        List<Book2AuthorEntity> book2AuthorEntities = bookToAuthorRepository.findBook2AuthorEntitiesByAuthorId(
                authorEntityRepository.findAuthorEntitiesByName(name));
@@ -99,13 +119,13 @@ public class AuthorService {
 
        getBookEntitiesByAuthorNameSize = bookRepository.findAllById(bookIds).size();
 
-       PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(bookRepository.findAllById(bookIds));
-       pagedListHolder.setPageSize(limit);
-       pagedListHolder.setPage(offset);
+ //       PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(bookRepository.findAllById(bookIds));
+//       pagedListHolder.setPageSize(limit);
+//       pagedListHolder.setPage(offset);
 
 
-        return  pagedListHolder.getPageList();
-    }
+        return  converterListToMapWithAuthors(bookRepository.findAllById(bookIds),offset,limit);
+     }
 
     public AuthorEntity getAuthorById(Long id) {
         return authorEntityRepository.findById(id).get();
