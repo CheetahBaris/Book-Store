@@ -1,26 +1,54 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div class="Cards Cards_refresh" th:fragment="pool" >
-    <div class="Card" th:each="book : ${booksList}">
+    <div class="Card" th:each="book : ${category== 'tag' ? map:
+     (category== 'genre' ? GenresList :
+      (category== 'author' ? AuthorsBooksList :
+       (category=='search' ?searchResults : booksList)))}">
         <div class="Card-picture">
             <a href="#" th:id="${book.id}">
-            <img src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
+                <img th:src="${book.image}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
             </a>
         </div>
         <div class="Card-content">
             <strong class="Card-title">
                 <a href="#" th:text="${book.title}">Техника</a>
             </strong>
-            <div class="Card-description" th:text="${book.authorEntity.getLast_name()+' '+book.authorEntity.getFirst_name()}">Кондратенко Александр Петрович</div>
+            <div class="Card-description" th:text="${category=='author'? Author.getName():''}">Кондратенко Александр Петрович
+            </div>
             <div class="Card-cost">
-                <span th:if="${ not #lists.isEmpty(book.priceOld)}" class="Card-priceOld" th:text="${'$'+book.priceOld}">₽300.00</span>
-                <span  class="Card-price" th:text="${'$'+book.price}">₽190.00</span>
+                    <span th:if="${ not #lists.isEmpty(book.discount)}" class="Card-priceOld"
+                          th:text="${'₽'+(book.price + book.price*book.discount)}">₽300.00</span>
+                <span class="Card-price" th:text="${'₽'+book.price}">₽190.00</span>
             </div>
         </div>
     </div>
-    <div class="Cards-footer Cards-footer_center">
-        <a class="btn btn_primary" href="#" th:attr="data-refreshshow = ${category}" data-refreshshow="recent"
-                                                     data-refreshoffset="20" data-refreshlimit="20" th:text="#{pool.showMore}">Показать еще</a>
+    <div class="Cards-footer Cards-footer_center" th:switch="${category}">
+        <a th:case="'tag'" class="btn btn_primary" href="#"
+           th:attr="data-refreshshow = 'tag', data-tag = ${TagName}"
+           data-tag="tag" data-refreshshow="recent"
+           data-refreshoffset="0" data-refreshlimit="10" th:text="#{pool.showMore}">Показать еще</a>
+
+        <a th:case="'genre'" class="btn btn_primary" href="#"
+           th:attr="data-refreshshow ='genre', data-genre =${GenreTag}"
+           data-genre="genre" data-refreshshow="recent"
+           data-refreshoffset="0" data-refreshlimit="10" th:text="#{pool.showMore}">Показать еще</a>
+
+        <a th:case="'author'" class="btn btn_primary" href="#"
+           th:attr="data-refreshshow = 'author', data-author = ${Author.getName()}"
+           data-author="author" data-refreshshow="recent"
+           data-refreshoffset="0" data-refreshlimit="10" th:text="#{pool.showMore}">Показать еще</a>
+
+        <a th:case="'search'" class="btn btn_primary" href="#"
+           th:attr="data-refreshshow = 'search', data-refreshquery = ${searchWordDto.getExample()}"
+           data-refreshquery="author" data-refreshshow="recent"
+           data-refreshoffset="0" data-refreshlimit="5" th:text="#{pool.showMore}">Показать еще</a>
+
+        <a th:default
+           th:if="${category != 'tag' && category != 'genre' && category != 'author' && category != 'search'}"
+           class="btn btn_primary" href="#"
+           th:attr="data-refreshshow = ${category}" data-refreshshow="recent"
+           data-refreshoffset="0" data-refreshlimit="10" th:text="#{pool.showMore}">Показать еще</a>
     </div>
 </div>
 </html>

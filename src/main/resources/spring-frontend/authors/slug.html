@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Тут название страницы написать</title>
+    <title th:text="${Author.getName()}">Тут название страницы написать</title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -23,13 +23,13 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Борис Васильевич Бедный')}"></ul>
-            <div th:replace="~{fragments/author_article_fragment :: article(authorEntity='Борис Васильевич Бедный')}"></div>
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${Author.getName()})}"></ul>
+            <div th:replace="~{fragments/author_article_fragment :: article(authorEntity='author')}"></div>
             <div class="Section"
-                 th:replace="~{fragments/book_slider_fragment :: bookSlider(title='Книги автора')}"></div>
-            <footer class="Section-footer"><a class="Author-books" th:href="@{/books/authorEntity}" href="/books/authorEntity.html">Все
+                 th:replace="~{fragments/book_slider_fragment :: bookSlider(title='author')}"></div>
+            <footer class="Section-footer"><a class="Author-books" th:href="@{/books/authorEntity(author=${Author.getName()},offset=0,limit=20)}" href="/books/authorEntity.html">Все
                 книги автора<span
-                        class="Author-amount">(55)</span></a>
+                        class="Author-amount" th:text="'('+${AuthorsFullBookListInteger}+')'">(55)</span></a>
             </footer>
         </main>
     </div>

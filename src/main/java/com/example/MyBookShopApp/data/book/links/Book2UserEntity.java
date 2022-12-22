@@ -13,28 +13,29 @@ public class Book2UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(columnDefinition = "TIMESTAMP(6) NOT NULL")
     private LocalDateTime time;
 
+
     @Column(columnDefinition = "INT NOT NULL")
     private int typeId;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
-    private List<BookEntity> bookId;
+    private  BookEntity bookId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userId;
 
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -54,12 +55,11 @@ public class Book2UserEntity {
         this.typeId = typeId;
     }
 
-
-    public List<BookEntity> getBookId() {
+    public BookEntity getBookId() {
         return bookId;
     }
 
-    public void setBookId(List<BookEntity> bookId) {
+    public void setBookId(BookEntity bookId) {
         this.bookId = bookId;
     }
 
@@ -70,4 +70,5 @@ public class Book2UserEntity {
     public void setUserId(UserEntity userId) {
         this.userId = userId;
     }
+
 }

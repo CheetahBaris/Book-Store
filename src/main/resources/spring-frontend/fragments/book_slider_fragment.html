@@ -4,22 +4,29 @@
     <div class="Section-header">
         <h2 class="Section-title" th:text="${title}">Рекомендуемое</h2>
     </div>
-    <!--    <div th:replace="~{fragments/books_pool_fragment :: pool(category=${title})}"></div>-->
-
     <div class="Slider Slider_carousel">
-        <div class="Slider-box Cards">
-            <div class="Slider-item" th:each="book : ${recommendedBooks}">
+        <div th:attr="data-load=${title=='author'?'author':'recommended'},
+         data-author=${title== 'author' ? Author.getName():''}"
+             data-author="author"
+             class="Slider-box Cards" data-load="author"
+             data-loadoffset="0"
+             data-loadlimit="6">
+            <div class="Slider-item"
+                 th:each="book :  ${title=='author'? AuthorsBooksList : recommendedBooks}">
                 <div class="Slider-content">
-                    <div class="Card"><a class="Card-picture" href="/books/slug.html"><img
-                            src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
+                    <div class="Card"><a class="Card-picture" href="/books/slug.html">
+                        <img th:src="${book.image}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/></a>
                         <div class="Card-content">
                             <strong class="Card-title">
                                 <a href="#" th:text="${book.title}">Техника</a>
                             </strong>
-                            <div class="Card-description" th:text="${book.authorEntity.getLast_name()+' '+book.authorEntity.getFirst_name()}">Кондратенко Валерий Петрович</div>
+                            <div class="Card-description" th:text="${title =='author'? Author.getName():'' }">
+                                Кондратенко Валерий Петрович
+                            </div>
                             <div class="Card-cost">
-                                <span class="Card-priceOld" th:text="${'$'+book.priceOld}">₽300.00</span>
-                                <span class="Card-price" th:text="${'$'+book.price}">₽190.00</span>
+                                        <span th:if="${ not #lists.isEmpty(book.discount)}" class="Card-priceOld"
+                                              th:text="${'₽' + (book.price + book.price*book.discount)}">₽300.00</span>
+                                <span class="Card-price" th:text="${'₽'+book.price}">₽190.00</span>
                             </div>
                         </div>
                     </div>

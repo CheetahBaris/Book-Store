@@ -18,9 +18,9 @@ public class FileDownloadEntity {
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private UserEntity userId;
 
-    @OneToMany
+    @OneToOne
     @JoinColumn(name = "book_id",referencedColumnName = "id")
-    private List<BookEntity> bookId;
+    private BookEntity bookId;
 
     @Column(columnDefinition = "INT NOT NULL DEFAULT 1")
     private int count;
@@ -44,11 +44,11 @@ public class FileDownloadEntity {
         this.userId = userId;
     }
 
-    public List<BookEntity> getBookId() {
+    public BookEntity getBookId() {
         return bookId;
     }
 
-    public void setBookId(List<BookEntity> bookId) {
+    public void setBookId(BookEntity bookId) {
         this.bookId = bookId;
     }
 
