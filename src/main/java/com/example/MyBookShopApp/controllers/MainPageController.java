@@ -1,17 +1,15 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.author.AuthorEntity;
-import com.example.MyBookShopApp.data.author.services.AuthorService;
+import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.book.services.BookService;
-import com.example.MyBookShopApp.data.book.services.BooksRatingAndPopularityService;
+import com.example.MyBookShopApp.services.BookService;
+import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 
-import com.example.MyBookShopApp.data.genre.serices.GenreService;
+import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +19,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class MainPageController {

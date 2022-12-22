@@ -1,7 +1,7 @@
 package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.book.services.BookService;
+import com.example.MyBookShopApp.services.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;

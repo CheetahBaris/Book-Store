@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.data.book.repositories;
+package com.example.MyBookShopApp.repositories;
 
 import com.example.MyBookShopApp.data.book.BookEntity;
 import org.springframework.data.domain.Page;

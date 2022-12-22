@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.data.author.repositoties;
+package com.example.MyBookShopApp.repositories;
 
 import com.example.MyBookShopApp.data.author.AuthorEntity;
 import liquibase.pro.packaged.S;

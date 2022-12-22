@@ -1,16 +1,13 @@
-package com.example.MyBookShopApp.data.author.services;
+package com.example.MyBookShopApp.services;
 
 import com.example.MyBookShopApp.data.author.AuthorEntity;
-import com.example.MyBookShopApp.data.author.repositoties.AuthorEntityRepository;
-import com.example.MyBookShopApp.data.author.repositoties.BookToAuthorRepository;
+import com.example.MyBookShopApp.repositories.AuthorEntityRepository;
+import com.example.MyBookShopApp.repositories.BookToAuthorRepository;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.links.Book2AuthorEntity;
- import com.example.MyBookShopApp.data.book.repositories.BookRepository;
-import liquibase.pro.packaged.S;
+ import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
- import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,24 +1,18 @@
-package com.example.MyBookShopApp.data.genre.serices;
+package com.example.MyBookShopApp.services;
 
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.links.Book2GenreEntity;
-import com.example.MyBookShopApp.data.book.repositories.BookRepository;
+import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.data.genre.GenreEntity;
-import com.example.MyBookShopApp.data.genre.repositories.BookToGenreRepository;
-import com.example.MyBookShopApp.data.genre.repositories.GenresRepository;
-import liquibase.pro.packaged.A;
-import liquibase.pro.packaged.P;
-import liquibase.pro.packaged.S;
+import com.example.MyBookShopApp.repositories.BookToGenreRepository;
+import com.example.MyBookShopApp.repositories.GenresRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.PagedListHolder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service

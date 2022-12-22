@@ -1,4 +1,4 @@
-package com.example.MyBookShopApp.data.genre.repositories;
+package com.example.MyBookShopApp.repositories;
 
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.links.Book2GenreEntity;

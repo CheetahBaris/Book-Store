@@ -1,9 +1,9 @@
-package com.example.MyBookShopApp.data.book.services;
+package com.example.MyBookShopApp.services;
 
 
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.book.repositories.BookRepository;
-import com.example.MyBookShopApp.data.book.repositories.BookToUserRepository;
+import com.example.MyBookShopApp.repositories.BookRepository;
+import com.example.MyBookShopApp.repositories.BookToUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

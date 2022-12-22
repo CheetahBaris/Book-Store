@@ -1,10 +1,7 @@
-package com.example.MyBookShopApp.data.book.services;
+package com.example.MyBookShopApp.services;
 
-import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.book.repositories.BookRepository;
-import com.example.MyBookShopApp.data.book.repositories.BookToUserRepository;
-import liquibase.pro.packaged.S;
+import com.example.MyBookShopApp.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
