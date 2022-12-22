@@ -54,39 +54,36 @@ public class AuthorService {
 
     public Map<String,BookEntity> getBooksWithAuthor(String name, Integer offset, Integer limit){
 
-//         authorEntityRepository.findAuthorEntitiesByName(name);
-
         List<Book2AuthorEntity> book2AuthorEntities = bookToAuthorRepository.findBook2AuthorEntitiesByAuthorId(
                 authorEntityRepository.findAuthorEntitiesByName(name));
-        HashMap<String,Long> bookIds = new HashMap<>();
-        HashMap<String,Long> bookIds1 = new HashMap<>();
 
-        List<Book2AuthorEntity> bookEntityList = new ArrayList<>();
-         for (Book2AuthorEntity book: book2AuthorEntities){
-             bookEntityList.addAll(bookToAuthorRepository.findBook2AuthorEntitiesByBookId(book.getBookId()));
+        HashMap<String,BookEntity> bookIds = new HashMap<>();
 
-            bookIds.put(getAuthorById(book.getAuthorId().getId()).getName(),book.getBookId().getId());
+        for (int i=0; i<book2AuthorEntities.size();i++){
+            StringBuilder authorBuilder = new StringBuilder();
+            for (Book2AuthorEntity b: bookToAuthorRepository.findBook2AuthorEntitiesByBookId(book2AuthorEntities.get(i).getBookId())){
+                authorBuilder.append(b.getAuthorId().getName()).append(", ");
+            }
+            bookIds.put(authorBuilder.toString(),book2AuthorEntities.get(i).getBookId());
+
         }
-        for (int i= 0; i<book2AuthorEntities.size();i++){
-            
-             bookIds1.put(bookEntityList.get(i).getAuthorId().getName(),book2AuthorEntities.get(i).getBookId().getId());
-        }
-        getBookEntitiesByAuthorNameSize = bookRepository.findAllById(bookIds.values()).size();
 
-        PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(bookRepository.findAllById(bookIds.values()));
+        PagedListHolder<BookEntity> pagedListHolder = new PagedListHolder<>(new ArrayList<>(bookIds.values()));
         pagedListHolder.setPageSize(limit);
         pagedListHolder.setPage(offset);
-        Map<String, BookEntity> list = new HashMap<>();
-
+        HashMap<String,BookEntity> bookIds1 = new HashMap<>();
 
         for(int i=0;i<pagedListHolder.getPageList().size();i++){
-            for(Map.Entry<String, Long> b: bookIds.entrySet()){
-                if(pagedListHolder.getPageList().get(i).getId().equals(b.getValue())){
-                    list.put(b.getKey(),pagedListHolder.getPageList().get(i));
+            for(Map.Entry<String, BookEntity> entityEntry: bookIds.entrySet()){
+                if(entityEntry.getValue().equals(pagedListHolder.getPageList().get(i))){
+
+                    bookIds1.put(entityEntry.getKey().substring(0,entityEntry.getKey().trim().length()-1),
+                            pagedListHolder.getPageList().get(i));
                 }
             }
-         }
-        return  list;
+        }
+
+        return  bookIds1;
     }
 
     public List<BookEntity> getBookEntitiesByAuthorName(String name, Integer offset, Integer limit){

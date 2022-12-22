@@ -273,7 +273,7 @@ public class MainPageController {
     public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author, Model model){
 
         model.addAttribute("AuthorsBooksList",
-                authorService.getBookEntitiesByAuthorName(author,0,10));
+                authorService.getBooksWithAuthor(author,0,10));
          model.addAttribute("Author",authorService.findAuthorEntitiesByName(author));
 
         return "/books/author.html";
