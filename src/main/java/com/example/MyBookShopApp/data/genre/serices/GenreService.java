@@ -10,6 +10,7 @@ import liquibase.pro.packaged.A;
 import liquibase.pro.packaged.P;
 import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -41,15 +42,17 @@ public class GenreService {
         return genresRepository.findGenreEntitiesByName(name);
     }
 
-    public Page<BookEntity> getBooksPageByGenre(String name, Integer offset, Integer limit){
+    public List<BookEntity> getBooksPageByGenre(String name, Integer offset, Integer limit){
         Pageable nextPage = PageRequest.of(offset,limit);
         List<Book2GenreEntity> books = findBook2GenreEntitiesByGenreId(findGenreEntitiesByName(name).getId());
         List<Long> booksId =  new ArrayList<>();
         for(Book2GenreEntity b:books){
-             booksId.add(b.getId());
+             booksId.add(b.getBookId().getId());
         }
-
-        return new PageImpl<>(bookRepository.findAllById(booksId), nextPage, bookRepository.findAllById(booksId).size());
+        PagedListHolder<BookEntity> pages = new PagedListHolder<>( bookRepository.findAllById(booksId));
+        pages.setPageSize(limit);
+        pages.setPage(offset);
+        return pages.getPageList();
     }
 
     public List<GenreEntity> findGenreEntitiesByParentId(Long parentId){

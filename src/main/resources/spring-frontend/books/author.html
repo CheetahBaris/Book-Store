@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Тут название страницы написать</title>
+    <title th:text="'Все книги '+${Author.getName()}">Тут название страницы написать</title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -22,12 +22,12 @@
     <div class="wrap">
         <main class="Middle-main">
             <ul class="breadcrumbs"
-                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Борис Васильевич Бедный')}"></ul>
-            <h1 class="Middle-title">Борис Васильевич Бедный
+                th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category=${Author.getName()})}"></ul>
+            <h1 class="Middle-title" th:text="${Author.getName()}">Борис Васильевич Бедный
             </h1>
             <div class="Section">
                 <div class="Cards Cards_refresh"
-                     th:replace="~{fragments/books_pool_fragment :: pool(category='authorEntity')}"></div>
+                     th:replace="~{fragments/books_pool_fragment :: pool(category='author')}"></div>
             </div>
         </main>
     </div>

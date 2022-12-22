@@ -26,11 +26,11 @@ public class BooksRestApiController {
         this.bookService = bookService;
     }
 
-    @GetMapping("/books/by-author")
-    @ApiOperation("operation to get book list of bookshop by passed author first name")
-    public ResponseEntity<List<BookEntity>> booksByAuthor(@RequestParam("author")String authorName){
-        return ResponseEntity.ok(bookService.getBooksByAuthor(authorName));
-    }
+//    @GetMapping("/books/by-author")
+//    @ApiOperation("operation to get book list of bookshop by passed author first name")
+//    public ResponseEntity<List<BookEntity>> booksByAuthor(@RequestParam("author")String authorName){
+//        return ResponseEntity.ok(bookService.getBooksByAuthor(authorName));
+//    }
 
     @GetMapping("/books/by-title")
     @ApiOperation("get books by title")

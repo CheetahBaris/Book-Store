@@ -27,7 +27,11 @@
                 <div class="search">
                     <form class="form form_search" action="#" method="post" data-searchlimit="5">
                         <input class="search-input" id="querypage" name="querypage" type="text"
-                               placeholder="Search over 30 million book titles" th:value="${searchWordDto.example}"
+                               placeholder="Search over 30 million book titles"
+                               th:attr="data-refreshquery = ${searchWordDto.getExample()}"
+                               data-refreshquery="search" data-refreshshow="search"
+                               data-refreshoffset="0" data-refreshlimit="5"
+                               th:value="${searchWordDto.example}"
                                value="Техника"/>
                         <button class="search-button" type="submit" name="searchpage" id="searchpage">Поиск
                         </button>
@@ -37,32 +41,11 @@
             <div class="Section Section_close">
                 <header class="Section-header">
                     <h2 class="Section-title Middle-searchHeader"
-                        th:text="${'Найдено книг: ' + searchResults.size()}">Найдено 40 книг
+                        th:text="${'Найдено книг: ' + searchResultsFullLong }">Найдено 40 книг
                     </h2>
                 </header>
-                <div class="Cards Cards_search Cards_refresh">
-                    <div class="Card" th:each="book : ${searchResults}">
-                        <div class="Card-picture"><a href="#"><img  th:src="${book.image}"
-                                                                    src="/assets/img/content/main/card.jpg"
-                                                                    alt="card.jpg"/></a>
-                        </div>
-                        <div class="Card-content">
-                            <strong class="Card-title"><a href="#" th:text="${book.title}">Техника</a>
-                            </strong>
-                            <div class="Card-description" th:text="${book.getAuthor().getLastName() +' '+book.getAuthor().getFirstName()}">Кондратенко Александр Петрович
-                            </div>
-                            <div class="Card-cost">
-                                <span th:if="${ not #lists.isEmpty(book.discount)}" class="Card-priceOld" th:text="${'₽'+( book.price + book.price*book.discount)}">₽300.00</span>
-                                <span  class="Card-price" th:text="${'₽'+book.price}">₽190.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="Cards-footer Cards-footer_center"><a class="btn btn_primary" href="#"
-                                                                     data-refreshshow="search" data-refreshoffset="0"
-                                                                     data-refreshlimit="5"
-                                                                     th:attr="data-refreshquery=${searchWordDto.example}"
-                                                                     data-refreshquery="Техника">Показать еще</a>
-                    </div>
+                <div class="Cards Cards_search Cards_refresh" >
+                    <div class="Card"  th:replace="~{fragments/books_pool_fragment :: pool(category='search')}"></div>
                 </div>
             </div>
         </main>

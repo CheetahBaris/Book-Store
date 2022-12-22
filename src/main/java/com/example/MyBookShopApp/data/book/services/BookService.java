@@ -31,9 +31,9 @@ public class BookService {
     }
 
 
-    public List<BookEntity> getBooksByAuthor(String authorName){
-        return bookRepository.findBooksByAuthorFirstNameContaining(authorName);
-    }
+//    public List<BookEntity> getBooksByAuthor(String authorName){
+//        return bookRepository.findBooksByAuthorFirstNameContaining(authorName);
+//    }
 
     public List<BookEntity> getBooksByTitle(String title){
         return bookRepository.findBooksByTitleContaining(title);

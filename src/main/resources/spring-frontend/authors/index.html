@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Тут название страницы написать</title>
+    <title th:text="#{topbar.authors}"></title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -22,7 +22,7 @@
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
-            <h1 class="Middle-title">Авторы
+            <h1 class="Middle-title" th:text="#{topbar.authors}">Авторы
             </h1>
             <div class="Section">
                 <div class="Authors">
@@ -38,9 +38,9 @@
                         </h2>
                         <div class="Authors-letter">
                             <div class="Authors-item"  th:each="authorEntity : ${authorsList.value}">
-                                <h href="/authors/slug.html"  th:text="${authorEntity.getLastName() + ' ' +authorEntity.getFirstName()}">
+                                <a th:href="@{/books/authors(author=(${authorEntity.getName()}),offset=0,limit=6)}" href="/authors/slug.html"  th:text="${authorEntity.getName()}">
                                     Абгарян Наринэ
-                                </h>
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title th:text="${#httpServletRequest.getParameter('tag')}"></title>
+    <title th:text="${TagName}"></title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -25,7 +25,7 @@
                 th:replace="~{fragments/breadcrumb_fragment :: breadcrumps(category='Tags')}"></ul>
             <div class="Section">
                 <div class="Section-header">
-                    <h1 class="Section-title"  th:text="${#httpServletRequest.getParameter('tag')}" >Психологическая проза
+                    <h1 class="Section-title"  th:text="${TagName}" >Психологическая проза
                     </h1>
                     <div class="Section-header-links"><a class="Section-header-link" th:href="@{/}" href="/index.html#tags">Все
                         тэги</a>

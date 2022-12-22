@@ -20,11 +20,7 @@ public class BookEntity {
     @Column(name = "pub_date")
     @ApiModelProperty("date of book publication")
     private Date pubDate;
-    @ManyToOne
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
-    @JsonIgnore
-    private AuthorEntity author;
-    @Column(name = "is_bestseller",columnDefinition = "SMALLINT")
+     @Column(name = "is_bestseller",columnDefinition = "SMALLINT")
     @ApiModelProperty("if isBestseller = 1 so the book is considered to be bestseller and if 0 the book is not a " +
             "bestseller")
     private Integer isBestseller;
@@ -68,14 +64,6 @@ public class BookEntity {
 
     public void setPubDate(Date pubDate) {
         this.pubDate = pubDate;
-    }
-
-    public AuthorEntity getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(AuthorEntity author) {
-        this.author = author;
     }
 
     public Integer getIsBestseller() {

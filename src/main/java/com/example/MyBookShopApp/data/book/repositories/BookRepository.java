@@ -18,7 +18,6 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
 
     //NEW BOOK REST REPOSITORY
 
-    List<BookEntity> findBooksByAuthorFirstNameContaining(String authorsFirstName);
 
     List<BookEntity> findBooksByTitleContaining(String bookTitle);
 
