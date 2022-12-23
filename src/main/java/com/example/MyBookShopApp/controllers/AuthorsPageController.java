@@ -1,17 +1,20 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.services.AuthorService;
+import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.services.BookService;
-import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
-
+import com.example.MyBookShopApp.services.AuthorService;
+import com.example.MyBookShopApp.services.BookService;
+import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -20,7 +23,8 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Controller
-public class MainPageController {
+public class AuthorsPageController {
+
 
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
@@ -29,8 +33,8 @@ public class MainPageController {
     private final GenreService genreService;
 
     @Autowired
-    public MainPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                              GenreService genreService, AuthorService authorService) {
+    public AuthorsPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
+                                 GenreService genreService, AuthorService authorService) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
@@ -100,75 +104,52 @@ public class MainPageController {
         return authorService.converterListToMapWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
-    @GetMapping("/")
-    public String mainPage() {
-
-        return "index";
-
+    @ModelAttribute("authorsMap")
+    public Map<String, List<AuthorEntity>> authorsMap() {
+        return authorService.getAuthorsMap();
     }
 
-    @GetMapping("/books/recommended")
+    @ModelAttribute("Author")
+    public AuthorEntity getAuthor(String author) {
+        return authorService.findAuthorEntitiesByName(author);
+    }
+
+
+    @GetMapping("/authors")
+    public String authorsPage() {
+
+        return "/authors/index.html";
+    }
+
+    @GetMapping("books/authors")
+    public String geAuthorsSlug(@RequestParam(value = "author", required = false) String author, @RequestParam("offset") Integer offset,
+                                @RequestParam("limit") Integer limit, Model model) {
+
+
+        model.addAttribute("AuthorsBooksList",
+                authorService.getBookEntitiesByAuthorName(author, offset, limit));
+        model.addAttribute("Author", authorService.findAuthorEntitiesByName(author));
+        model.addAttribute("AuthorsFullBookListInteger", authorService.getGetBookEntitiesByAuthorNameSize());
+        return "/authors/slug.html";
+    }
+
+    @GetMapping("books/page/authors")
     @ResponseBody
-    public BooksPageDto getRecommendedPageSlider(@RequestParam("offset") Integer offset,
-                                                 @RequestParam("limit") Integer limit) {
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(
-                bookService.getPageOfRecommendedBooks(offset, limit).getContent(), 1, 6));
-    }
-
-    @GetMapping("/books/tags")
-    public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        model.addAttribute("tagListMap", tagListMap());
-        model.addAttribute("map", authorService.converterListToMapWithAuthors(
-                bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
-        model.addAttribute("TagName", tag);
-        return "/tags/index.html";
-    }
-
-    @GetMapping("/books/page/tags")
-    @ResponseBody
-    public BooksPageDto getBookTagPage(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
+    public BooksPageDto getAuthorsPage(@RequestParam(value = "author", required = false) String author,
+                                       @RequestParam(value = "offset", required = false) Integer offset,
                                        @RequestParam(value = "limit", required = false) Integer limit) {
 
+        return new BooksPageDto(authorService.getBookEntitiesByAuthorName(author, offset + 1, limit));
 
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(
-                bookService.findBookEntitiesByTagPage(tag, offset + 1, limit).getContent(), offset + 1, limit));
     }
 
+    @GetMapping("books/authorEntity")
+    public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author, Model model) {
 
-    @GetMapping("/documents")
-    public String getDocuments() {
-        return "/documents/index.html";
+        model.addAttribute("AuthorsBooksList",
+                authorService.getBookEntitiesByAuthorName(author, 0, 10));
+        model.addAttribute("Author", authorService.findAuthorEntitiesByName(author));
+
+        return "/books/author.html";
     }
-
-    @GetMapping("/postponed")
-    public String getPostponedPage() {
-        return "/postponed.html";
-    }
-
-    @GetMapping("/cart")
-    public String getCartPage() {
-        return "/cart.html";
-    }
-
-    @GetMapping("/signin")
-    public String getSingnInPage() {
-        return "/signin.html";
-    }
-
-    @GetMapping("/about")
-    public String getAboutPage() {
-        return "/about.html";
-    }
-
-    @GetMapping("/faq")
-    public String getFAQPage() {
-        return "faq.html";
-    }
-
-    @GetMapping("/contacts")
-    public String getContactsPage() {
-        return "contacts.html";
-    }
-
 }

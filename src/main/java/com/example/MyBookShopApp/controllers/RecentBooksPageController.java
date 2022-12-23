@@ -1,17 +1,18 @@
 package com.example.MyBookShopApp.controllers;
 
-import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.services.BookService;
-import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
-
+import com.example.MyBookShopApp.services.AuthorService;
+import com.example.MyBookShopApp.services.BookService;
+import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -20,7 +21,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Controller
-public class MainPageController {
+public class RecentBooksPageController {
 
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
@@ -29,8 +30,8 @@ public class MainPageController {
     private final GenreService genreService;
 
     @Autowired
-    public MainPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                              GenreService genreService, AuthorService authorService) {
+    public RecentBooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
+                                     GenreService genreService, AuthorService authorService) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
@@ -89,7 +90,8 @@ public class MainPageController {
 
     @ModelAttribute("popularBooks")
     public List<BookEntity> popularAttrList() {
-        return authorService.converterListToMapWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
+        return authorService.converterListToMapWithAuthors(
+                booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
     }
 
     @ModelAttribute("recentBooks")
@@ -100,75 +102,46 @@ public class MainPageController {
         return authorService.converterListToMapWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
-    @GetMapping("/")
-    public String mainPage() {
-
-        return "index";
-
-    }
-
-    @GetMapping("/books/recommended")
+    @GetMapping("/books/page/recent")
     @ResponseBody
-    public BooksPageDto getRecommendedPageSlider(@RequestParam("offset") Integer offset,
-                                                 @RequestParam("limit") Integer limit) {
+    public BooksPageDto getRecentPage(@RequestParam(value = "from", required = false) String from,
+                                      @RequestParam(value = "to", required = false) String to,
+                                      @RequestParam(value = "offset", required = false) Integer offset,
+                                      @RequestParam(value = "limit", required = false) Integer limit)
+            throws ParseException {
+
+        String[] fromArr = from.split("\\.");
+        String[] toArr = to.split("\\.");
+        String newFrom = "";
+        String newTo = "";
+
+        for (int i = fromArr.length - 1; i >= 0; i--) {
+
+            if (i != 0) {
+
+                newFrom += fromArr[i] + '-';
+                newTo += toArr[i] + '-';
+            } else {
+
+                newFrom += fromArr[i];
+                newTo += toArr[i];
+            }
+        }
+
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date fromDateRecent = format.parse(newFrom);
+        Date endDateRecent = format.parse(newTo);
+
         return new BooksPageDto(authorService.converterListToMapWithAuthors(
-                bookService.getPageOfRecommendedBooks(offset, limit).getContent(), 1, 6));
+                bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, offset + 1, limit).getContent(), offset + 1, limit));
     }
 
-    @GetMapping("/books/tags")
-    public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        model.addAttribute("tagListMap", tagListMap());
-        model.addAttribute("map", authorService.converterListToMapWithAuthors(
-                bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
-        model.addAttribute("TagName", tag);
-        return "/tags/index.html";
+    @GetMapping("/books/recent")
+    public String getBookRecentPage(@RequestParam(value = "from", required = false) String from,
+                                    @RequestParam(value = "to", required = false) String to,
+                                    @RequestParam(value = "offset", required = false) Integer offset,
+                                    @RequestParam(value = "limit", required = false) Integer limit) {
+
+        return "/books/recent.html";
     }
-
-    @GetMapping("/books/page/tags")
-    @ResponseBody
-    public BooksPageDto getBookTagPage(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                                       @RequestParam(value = "limit", required = false) Integer limit) {
-
-
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(
-                bookService.findBookEntitiesByTagPage(tag, offset + 1, limit).getContent(), offset + 1, limit));
-    }
-
-
-    @GetMapping("/documents")
-    public String getDocuments() {
-        return "/documents/index.html";
-    }
-
-    @GetMapping("/postponed")
-    public String getPostponedPage() {
-        return "/postponed.html";
-    }
-
-    @GetMapping("/cart")
-    public String getCartPage() {
-        return "/cart.html";
-    }
-
-    @GetMapping("/signin")
-    public String getSingnInPage() {
-        return "/signin.html";
-    }
-
-    @GetMapping("/about")
-    public String getAboutPage() {
-        return "/about.html";
-    }
-
-    @GetMapping("/faq")
-    public String getFAQPage() {
-        return "faq.html";
-    }
-
-    @GetMapping("/contacts")
-    public String getContactsPage() {
-        return "contacts.html";
-    }
-
 }

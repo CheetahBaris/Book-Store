@@ -20,7 +20,7 @@
                             <strong class="Card-title">
                                 <a href="#" th:text="${book.title}">Техника</a>
                             </strong>
-                            <div class="Card-description" th:text="${title =='author'? Author.getName():'' }">
+                            <div class="Card-description" th:text="${book.authorsNames}">
                                 Кондратенко Валерий Петрович
                             </div>
                             <div class="Card-cost">

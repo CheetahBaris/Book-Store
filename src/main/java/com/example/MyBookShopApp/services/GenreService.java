@@ -53,7 +53,7 @@ public class GenreService {
         return genresRepository.findGenreEntitiesByParentId(parentId);
     }
 
-    public List<Book2GenreEntity> getAllBook2GenreEntities(){
+     public List<Book2GenreEntity> getAllBook2GenreEntities(){
         return bookToGenreRepository.findAll();
     }
     public List<Book2GenreEntity> findBook2GenreEntitiesByGenreId(Long genreId){
