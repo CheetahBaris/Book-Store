@@ -1,42 +1,49 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.data.ResourceStorage;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Logger;
 
 @Controller
-public class RecentBooksPageController {
-
+@RequestMapping("/books")
+public class BooksPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
 
+    private final ResourceStorage storage;
     private final GenreService genreService;
 
-    @Autowired
-    public RecentBooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                     GenreService genreService, AuthorService authorService) {
+    public BooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
+                               AuthorService authorService, ResourceStorage storage, GenreService genreService) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
-        this.genreService = genreService;
         this.authorService = authorService;
+        this.storage = storage;
+        this.genreService = genreService;
     }
 
     @ModelAttribute("booksListFull")
@@ -103,46 +110,44 @@ public class RecentBooksPageController {
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
-    @GetMapping("/books/page/recent")
-    @ResponseBody
-    public BooksPageDto getRecentPage(@RequestParam(value = "from", required = false) String from,
-                                      @RequestParam(value = "to", required = false) String to,
-                                      @RequestParam(value = "offset", required = false) Integer offset,
-                                      @RequestParam(value = "limit", required = false) Integer limit)
-            throws ParseException, BookstoreApiWrongParameterException {
-
-        String[] fromArr = from.split("\\.");
-        String[] toArr = to.split("\\.");
-        String newFrom = "";
-        String newTo = "";
-
-        for (int i = fromArr.length - 1; i >= 0; i--) {
-
-            if (i != 0) {
-
-                newFrom += fromArr[i] + '-';
-                newTo += toArr[i] + '-';
-            } else {
-
-                newFrom += fromArr[i];
-                newTo += toArr[i];
-            }
-        }
-
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse(newFrom);
-        Date endDateRecent = format.parse(newTo);
-
-        return new BooksPageDto(authorService.converterBookListToListWithAuthors(
-                bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, offset + 1, limit).getContent(), offset + 1, limit));
+    @ModelAttribute("slugBook")
+    private BookEntity getSlugBook(String slug) throws BookstoreApiWrongParameterException {
+        return bookService.getBookBySlug(slug);
     }
 
-    @GetMapping("/books/recent")
-    public String getBookRecentPage(@RequestParam(value = "from", required = false) String from,
-                                    @RequestParam(value = "to", required = false) String to,
-                                    @RequestParam(value = "offset", required = false) Integer offset,
-                                    @RequestParam(value = "limit", required = false) Integer limit) {
 
-        return "/books/recent.html";
+    @GetMapping("/{slug}")
+    public String bookPage(@PathVariable("slug") String slug, Model model) throws BookstoreApiWrongParameterException {
+        getSlugBook(slug);
+        model.addAttribute("slugBook", bookService.getBookBySlug(slug));
+        return "/books/slug.html";
+    }
+
+    @PostMapping("/{slug}/img/save")
+    public String saveNewBookImage(@RequestParam("file") MultipartFile file, @PathVariable("slug") String slug, Model model) throws IOException, BookstoreApiWrongParameterException {
+        String savePath = storage.saveNewBookImage(file, slug);
+        BookEntity bookToUpdate = bookService.getBookBySlug(slug);
+        bookToUpdate.setImage(savePath);
+        bookService.saveBookEntity(bookToUpdate); //save new path in db here
+
+        return "redirect:/books/" + slug;
+    }
+
+    @GetMapping("/download/{hash}")
+    public ResponseEntity<ByteArrayResource> bookFile(@PathVariable("hash") String hash) throws IOException {
+        Path path = storage.getBookFilePath(hash);
+        Logger.getLogger(this.getClass().getSimpleName()).info("book file path: " + path);
+
+        MediaType mediaType = storage.getBookFileMime(hash);
+        Logger.getLogger(this.getClass().getSimpleName()).info("book file mime type: " + mediaType);
+
+        byte[] data = storage.getBookFileByteArray(hash);
+        Logger.getLogger(this.getClass().getSimpleName()).info("book file data len: " + data.length);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + path.getFileName().toString())
+                .contentType(mediaType)
+                .contentLength(data.length)
+                .body(new ByteArrayResource(data));
     }
 }

@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <div class="ProductCard-desc" th:fragment="bookDesc">
     <div class="ProductCard-header">
-        <h1 class="ProductCard-title">Мара и морок
+        <h1 class="ProductCard-title" th:text="${slugBook.getTitle()}">Мара и морок
         </h1>
         <div class="ProductCard-authorEntity"><span class="ProductCard-titleProp">Автор:</span>&#32;<a
-                href="#">Лия Арден</a>
+                href="#" th:text="${slugBook.getAuthorsNames()}">Лия Арден</a>
         </div>
         <div class="ProductCard-rating"><span class="ProductCard-titleProp">Рейтинг:</span>
             <button class="trigger trigger_dropdown" type="button">
@@ -273,7 +273,8 @@
         </div>
         <div class="ProductCard-assessment"><span
                 class="ProductCard-titleProp">Оцените книгу:</span><span class="Rating Rating_input"
-                                                                         data-bookid="2121"><span
+
+                                                                         data-bookid="book-sbf-719"><span
                 class="Rating-stars"><span class="Rating-star">
                         <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
                           <g>
@@ -325,10 +326,10 @@
                 href="/tags/">Современные</a>,&#32;<a href="/tags/">Психологическая проза</a>
         </div>
         <div class="ProductCard-cost"><span class="ProductCard-titleProp">Цена:</span><span
-                class="ProductCard-priceOld">₽300</span><span class="ProductCard-price">₽180</span>
+                class="ProductCard-priceOld"th:text="'₽'+${slugBook.getPrice()}">₽300</span><span class="ProductCard-price"th:text="${'₽'+ #numbers.formatDecimal(book.getPrice() +(book.getPrice()*book.getDiscount()),2,0)}">₽180</span>
         </div>
     </div>
-    <div class="ProductCard-text">
+    <div class="ProductCard-text" th:text="${slugBook.getDescription()}">
         <p>Таких, как я, называют Марами - отмеченными самой богиней смерти Мораной. Когда-то у меня
             и моих шести сестер был свой путь. Тогда люди нас уважали и просили о милосердии. Они
             приносили нам подношения и молились нам. Но 200 лет назад все изменилось, когда принц

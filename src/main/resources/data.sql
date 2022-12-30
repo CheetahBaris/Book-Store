@@ -4170,3 +4170,12 @@ insert into book2author (id, sort_index, author_id, book_id) values (997, 2, 1, 
 insert into book2author (id, sort_index, author_id, book_id) values (998, 3, 4, 979);
 insert into book2author (id, sort_index, author_id, book_id) values (999, 2, 3, 568);
 insert into book2author (id, sort_index, author_id, book_id) values (1000, 1, 5, 808);
+
+insert into book_file (id, hash, type_id, path, book_id) values (1, 'book-file-uaw-201', 1, '/Trippledex.pdf', 21);
+insert into book_file (id, hash, type_id, path, book_id) values (2, 'book-file-szd-985', 2, '/Trippledex.epub', 21);
+insert into book_file (id, hash, type_id, path, book_id) values (3, 'book-file-kta-097', 3, '/Trippledex.fb2', 21);
+
+insert into book_file_type (id, name, disription) values (1, 'PDF', 'at turpis donec posuere metus vitae ipsum aliquam non mauris morbi non lectus aliquam sit');
+insert into book_file_type (id, name, disription) values (2, 'EPUB', 'dolor vel est donec odio justo sollicitudin ut suscipit a feugiat et eros vestibulum ac est');
+insert into book_file_type (id, name, disription) values (3, 'FB2', 'mattis pulvinar nulla pede ullamcorper augue a suscipit nulla elit ac nulla sed vel enim sit amet nunc viverra dapibus');
+

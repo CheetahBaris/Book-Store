@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Тут название страницы написать</title>
+    <title >Cart</title>
     <meta name="description" content="Описание страницы">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -24,18 +24,21 @@
         <main class="Middle-main">
             <h1 class="Middle-title">Корзина
             </h1>
+            <h3 th:if="${isCartEmpty}">Корзина пуста ヾ(≧▽≦*)o
+            </h3>
             <form class="form Cart" action="#" method="post">
-                <div class="Cart-product">
+                <div class="Cart-product" th:each="book : ${bookCart}">
                     <div class="Cart-block Cart-block_row">
-                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img"
-                                                                                                   src="/assets/img/content/main/card.jpg"
+                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#" th:href="@{'/books/'+${book.slug}}"><img class="Cart-img"
+                                                                                                  th:src="${book.image}" src="/assets/img/content/main/card.jpg"
                                                                                                    alt="card.jpg"/></a>
                         </div>
                         <div class="Cart-block Cart-block_row">
                             <div class="Cart-block Cart-block_info">
-                                <div class="Cart-authorEntity"><a href="#">Борис Васильевич Бедный</a>
+                                <div class="Cart-authorEntity"><a href="#" th:href="@{/books/authorEntity(author=${#strings.substringBefore(book.authorsNames,',')})}"
+                                                                  th:text="${book.authorsNames}">Борис Васильевич Бедный</a>
                                 </div>
-                                <div class="Cart-title"><a href="#">Жизнь</a>
+                                <div class="Cart-title"><a href="#" th:text="${book.title}">Жизнь</a>
                                 </div>
                                 <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
                                         class="Rating-star Rating-star_view">
@@ -83,6 +86,7 @@
                                 <div class="Cart-buttons">
                                     <div class="Cart-btn">
                                         <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
+                                                th:attr="data-bookid=${'cart/postponed/'+book.slug}"
                                                 data-bookid="[1122]"><span class="btn-icon"><img
                                                 src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
                                                 class="btn-content">Отложить</span>
@@ -90,6 +94,7 @@
                                     </div>
                                     <div class="Cart-btn">
                                         <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK"
+                                                th:attr="data-bookid=${'cart/remove/'+book.slug}"
                                                 data-bookid="[1122]"><span class="btn-icon"><img
                                                 src="/assets/img/icons/trash.svg" alt="trash.svg"/></span><span
                                                 class="btn-content">Удалить</span>
@@ -100,188 +105,18 @@
                             <div class="Cart-block Cart-block_price">
                                 <div class="Cart-priceTitle">Цена:
                                 </div>
-                                <div class="Cart-price">254 р.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="Cart-product">
-                    <div class="Cart-block Cart-block_row">
-                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img"
-                                                                                                   src="/assets/img/content/main/card.jpg"
-                                                                                                   alt="card.jpg"/></a>
-                        </div>
-                        <div class="Cart-block Cart-block_row">
-                            <div class="Cart-block Cart-block_info">
-                                <div class="Cart-authorEntity"><a href="#">Борис Васильевич Маяковский</a>
-                                </div>
-                                <div class="Cart-title"><a href="#">Трубы</a>
-                                </div>
-                                <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
-                                        class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span></span></span>
-                                </div>
-                                <div class="Cart-buttons">
-                                    <div class="Cart-btn">
-                                        <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
-                                                data-bookid="[1133]"><span class="btn-icon"><img
-                                                src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
-                                                class="btn-content">Отложить</span>
-                                        </button>
-                                    </div>
-                                    <div class="Cart-btn">
-                                        <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK"
-                                                data-bookid="[1133]"><span class="btn-icon"><img
-                                                src="/assets/img/icons/trash.svg" alt="trash.svg"/></span><span
-                                                class="btn-content">Удалить</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="Cart-block Cart-block_price">
-                                <div class="Cart-priceTitle">Цена:
-                                </div>
-                                <div class="Cart-price Cart-price_old">150 р.
-                                </div>
-                                <div class="Cart-price">100 р.
-                                </div>
-                                <div class="Cart-sale">-30%
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="Cart-product">
-                    <div class="Cart-block Cart-block_row">
-                        <div class="Cart-block Cart-block_pict"><a class="Cart-pict" href="#"><img class="Cart-img"
-                                                                                                   src="/assets/img/content/main/card.jpg"
-                                                                                                   alt="card.jpg"/></a>
-                        </div>
-                        <div class="Cart-block Cart-block_row">
-                            <div class="Cart-block Cart-block_info">
-                                <div class="Cart-authorEntity"><a href="#">Борис Васильевич Бедный</a>
-                                </div>
-                                <div class="Cart-title"><a href="#">Жизнь</a>
-                                </div>
-                                <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
-                                        class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star Rating-star_view">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span><span class="Rating-star">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18">
-                            <g>
-                              <g>
-                                <path fill="#ffc000"
-                                      d="M9.5 14.925L3.629 18l1.121-6.512L0 6.875l6.564-.95L9.5 0l2.936 5.925 6.564.95-4.75 4.613L15.371 18z"></path>
-                              </g>
-                            </g>
-                          </svg></span></span></span>
-                                </div>
-                                <div class="Cart-buttons">
-                                    <div class="Cart-btn">
-                                        <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
-                                                data-bookid="[1111]"><span class="btn-icon"><img
-                                                src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
-                                                class="btn-content">Отложить</span>
-                                        </button>
-                                    </div>
-                                    <div class="Cart-btn">
-                                        <button class="btn btn_danger btn_outline" data-sendstatus="UNLINK"
-                                                data-bookid="[1111]"><span class="btn-icon"><img
-                                                src="/assets/img/icons/trash.svg" alt="trash.svg"/></span><span
-                                                class="btn-content">Удалить</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="Cart-block Cart-block_price">
-                                <div class="Cart-priceTitle">Цена:
-                                </div>
-                                <div class="Cart-price Cart-price_old">254 р.
-                                </div>
-                                <div class="Cart-price">180 р.
-                                </div>
-                                <div class="Cart-sale">-30%
+                                <div class="Cart-price" th:text="${'₽'+book.price}">254 р.
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="Cart-total">
-                    <div class="Cart-block Cart-block_total">
+                    <div class="Cart-block Cart-block_total" th:if="${!isCartEmpty}">
                         <strong class="Cart-title">Итого:
-                        </strong><span class="Cart-price">534 р.</span><span class="Cart-price_old">658 р.</span>
+                        </strong><span class="Cart-price" th:text="${'₽'+ #numbers.formatDecimal(finalPrice,2,0)}">534 р.</span><span class="Cart-price_old" th:text="${'₽'+#numbers.formatDecimal(finalPriceOld,2,0)}" >658 р.</span>
                     </div>
-                    <div class="Cart-block"><a class="btn btn_success btn_md" href="/order.html">Купить</a>
+                    <div class="Cart-block" th:if="${!isCartEmpty}"><a class="btn btn_success btn_md" href="/order.html">Купить</a>
                     </div>
                 </div>
             </form>

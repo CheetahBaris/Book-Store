@@ -14,11 +14,11 @@ public class FileDownloadEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private UserEntity userId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book_id",referencedColumnName = "id")
     private BookEntity bookId;
 

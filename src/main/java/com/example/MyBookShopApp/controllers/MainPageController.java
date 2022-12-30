@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.services.BookService;
@@ -43,32 +44,32 @@ public class MainPageController {
     }
 
     @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() {
+    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
 
         return bookService.getTagListMap();
     }
 
     @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() {
+    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
         List<BookEntity> bigList = bookService.getTagListMap().values().stream()
                 .max(Comparator.comparing(List::size)).get();
         return bigList.size();
     }
 
     @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() {
+    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
         List<BookEntity> bigList = bookService.getTagListMap().values().stream()
                 .min(Comparator.comparing(List::size)).get();
         return bigList.size();
     }
 
     @ModelAttribute("booksList")
-    public List<BookEntity> bookList() {
+    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
         return bookService.getPageOfRecommendedBooks(0, 10).getContent();
     }
 
     @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() {
+    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
         return bookService.getPageOfRecommendedBooks(0, 6).getContent();
     }
 
@@ -89,15 +90,15 @@ public class MainPageController {
 
     @ModelAttribute("popularBooks")
     public List<BookEntity> popularAttrList() {
-        return authorService.converterListToMapWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
+        return authorService.converterBookListToListWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
     }
 
     @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException {
+    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date fromDateRecent = format.parse("2002-05-21");
         Date endDateRecent = format.parse(LocalDate.now().toString());
-        return authorService.converterListToMapWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
+        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
     @GetMapping("/")
@@ -110,16 +111,16 @@ public class MainPageController {
     @GetMapping("/books/recommended")
     @ResponseBody
     public BooksPageDto getRecommendedPageSlider(@RequestParam("offset") Integer offset,
-                                                 @RequestParam("limit") Integer limit) {
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(
+                                                 @RequestParam("limit") Integer limit) throws BookstoreApiWrongParameterException {
+        return new BooksPageDto(authorService.converterBookListToListWithAuthors(
                 bookService.getPageOfRecommendedBooks(offset, limit).getContent(), 1, 6));
     }
 
     @GetMapping("/books/tags")
     public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "limit", required = false) Integer limit, Model model) {
+                             @RequestParam(value = "limit", required = false) Integer limit, Model model) throws BookstoreApiWrongParameterException {
         model.addAttribute("tagListMap", tagListMap());
-        model.addAttribute("map", authorService.converterListToMapWithAuthors(
+        model.addAttribute("map", authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
         model.addAttribute("TagName", tag);
         return "/tags/index.html";
@@ -128,12 +129,14 @@ public class MainPageController {
     @GetMapping("/books/page/tags")
     @ResponseBody
     public BooksPageDto getBookTagPage(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                                       @RequestParam(value = "limit", required = false) Integer limit) {
+                                       @RequestParam(value = "limit", required = false) Integer limit) throws BookstoreApiWrongParameterException {
 
 
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(
+        return new BooksPageDto(authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, offset + 1, limit).getContent(), offset + 1, limit));
     }
+
+
 
 
     @GetMapping("/documents")
@@ -141,15 +144,6 @@ public class MainPageController {
         return "/documents/index.html";
     }
 
-    @GetMapping("/postponed")
-    public String getPostponedPage() {
-        return "/postponed.html";
-    }
-
-    @GetMapping("/cart")
-    public String getCartPage() {
-        return "/cart.html";
-    }
 
     @GetMapping("/signin")
     public String getSingnInPage() {
