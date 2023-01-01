@@ -9,6 +9,7 @@ import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.DateFormat;
@@ -33,12 +35,14 @@ public class BooksPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
     private final ResourceStorage storage;
     private final GenreService genreService;
 
+    @Autowired
     public BooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                               AuthorService authorService, ResourceStorage storage, GenreService genreService) {
+                               AuthorService authorService,
+                               BooksRatingAndPopularityService booksRatingAndPopularityService1,
+                               ResourceStorage storage, GenreService genreService) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.authorService = authorService;
@@ -120,7 +124,18 @@ public class BooksPageController {
     public String bookPage(@PathVariable("slug") String slug, Model model) throws BookstoreApiWrongParameterException {
         getSlugBook(slug);
         model.addAttribute("slugBook", bookService.getBookBySlug(slug));
-        return "/books/slug.html";
+        model.addAttribute("slugBookRatingGrade",
+                booksRatingAndPopularityService.getBookRatingGradeBySlug(slug));
+        model.addAttribute("slugBookRatingGradeSize",
+                booksRatingAndPopularityService.getBookRatingGradeSizeBySlug(slug));
+        return "books/slug.html";
+    }
+    @PostMapping("/changeBookStatus")
+    public String boolGradingFunction(@PathParam("bookId") String bookId, @PathParam("value") Integer value, Model model){
+
+
+        booksRatingAndPopularityService.gradeBookFunctionAdmin(bookId,value);
+        return "redirect:/books/"+bookId;
     }
 
     @PostMapping("/{slug}/img/save")

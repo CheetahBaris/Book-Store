@@ -12,13 +12,13 @@ public class BookReviewEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private BookEntity bookId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userId;
 
@@ -28,11 +28,14 @@ public class BookReviewEntity {
     @Column(columnDefinition = "TEXT NOT NULL")
     private String text;
 
-    public int getId() {
+    @Column(name = "book_rating", columnDefinition = "SMALLINT")
+    private int bookRating;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,5 +69,13 @@ public class BookReviewEntity {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getBookRating() {
+        return bookRating;
+    }
+
+    public void setBookRating(int bookRating) {
+        this.bookRating = bookRating;
     }
 }
