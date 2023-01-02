@@ -6,18 +6,18 @@
       (category== 'author' ? AuthorsBooksList :
        (category=='search' ?searchResults : booksList)))}">
         <div class="Card-picture">
-            <a href="#" th:id="${book.id}">
+            <a href="#" th:href="@{'/books/' + ${book.slug}}" th:id="${book.id}">
                 <img th:src="${book.image}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
             </a>
         </div>
         <div class="Card-content">
             <strong class="Card-title">
-                <a href="#" th:text="${book.title}">Техника</a>
+                <a href="#" th:href="@{'/books/' + ${book.slug}}" th:text="${book.title}">Техника</a>
             </strong>
             <div class="Card-description" th:text="${book.authorsNames}">Кондратенко Александр Петрович</div>
             <div class="Card-cost">
                     <span th:if="${ not #lists.isEmpty(book.discount)}" class="Card-priceOld"
-                          th:text="${'₽'+(book.price + book.price*book.discount)}">₽300.00</span>
+                          th:text="${'₽'+ #numbers.formatDecimal(book.getPrice() +(book.getPrice()*book.getDiscount()),2,0)}">₽300.00</span>
                 <span class="Card-price" th:text="${'₽'+book.price}">₽190.00</span>
             </div>
         </div>

@@ -6,7 +6,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "books")
@@ -51,6 +53,17 @@ public class BookEntity {
                         // Meta, Nonsense, Paranoid, Philosophical, Pop culture,  Religious, Young adult
 
     private String authorsNames;
+    @OneToMany(mappedBy = "bookId")
+    private List<BookFileEntity> bookFileEntitiesList = new ArrayList<>();
+
+    public List<BookFileEntity> getBookFileEntitiesList() {
+        return bookFileEntitiesList;
+    }
+
+    public void setBookFileEntitiesList(List<BookFileEntity> bookFileEntitiesList) {
+        this.bookFileEntitiesList = bookFileEntitiesList;
+    }
+
     public Long getId() {
         return id;
     }

@@ -40,9 +40,9 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
 
     Page<BookEntity> findBookEntitiesByTag(String tag, Pageable nextPage);
 
-//     Page<BookEntity> findAllById(Iterable<Long> longs, Pageable nextPage);
+    BookEntity findBookEntitiesBySlug(String slug);
+    List<BookEntity> findBookEntitiesBySlugIn(List<String> slug);
 
-    //    Page<BookEntity> findAllBy(List<Long> id, Pageable nextPage);
 
 
 }

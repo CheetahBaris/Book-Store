@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.controllers;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
+import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
@@ -45,32 +46,32 @@ public class GenresPageController {
     }
 
     @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() {
+    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
 
         return bookService.getTagListMap();
     }
 
     @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() {
+    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
         List<BookEntity> bigList = bookService.getTagListMap().values().stream()
                 .max(Comparator.comparing(List::size)).get();
         return bigList.size();
     }
 
     @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() {
+    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
         List<BookEntity> bigList = bookService.getTagListMap().values().stream()
                 .min(Comparator.comparing(List::size)).get();
         return bigList.size();
     }
 
     @ModelAttribute("booksList")
-    public List<BookEntity> bookList() {
+    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
         return bookService.getPageOfRecommendedBooks(0, 10).getContent();
     }
 
     @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() {
+    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
         return bookService.getPageOfRecommendedBooks(0, 6).getContent();
     }
 
@@ -91,16 +92,16 @@ public class GenresPageController {
 
     @ModelAttribute("popularBooks")
     public List<BookEntity> popularAttrList() {
-        return authorService.converterListToMapWithAuthors(
+        return authorService.converterBookListToListWithAuthors(
                 booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
     }
 
     @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException {
+    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date fromDateRecent = format.parse("2002-05-21");
         Date endDateRecent = format.parse(LocalDate.now().toString());
-        return authorService.converterListToMapWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
+        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
     @GetMapping("/genres")
@@ -116,7 +117,7 @@ public class GenresPageController {
     public String getBooksByGenreSlug(@RequestParam(value = "genre", required = false) String genre, Model model) {
 
 
-        model.addAttribute("GenresList", authorService.converterListToMapWithAuthors(
+        model.addAttribute("GenresList", authorService.converterBookListToListWithAuthors(
                 genreService.getBooksPageByGenre(genre, 0, 10), 0, 10));
         model.addAttribute("GenreTag", genre);
 
@@ -130,6 +131,6 @@ public class GenresPageController {
                                         @RequestParam(value = "limit", required = false) Integer limit) {
 
 
-        return new BooksPageDto(authorService.converterListToMapWithAuthors(genreService.getBooksPageByGenre(genre, offset + 1, limit), offset + 1, limit));
+        return new BooksPageDto(authorService.converterBookListToListWithAuthors(genreService.getBooksPageByGenre(genre, offset + 1, limit), offset + 1, limit));
     }
 }

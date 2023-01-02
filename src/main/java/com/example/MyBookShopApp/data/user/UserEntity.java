@@ -20,7 +20,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(columnDefinition = "VARCHAR(255) NOT NULL")
     private String hash;
@@ -59,11 +59,11 @@ public class UserEntity {
 //    @OneToOne(mappedBy = "userId")
 //    private MessageEntity messageEntity;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

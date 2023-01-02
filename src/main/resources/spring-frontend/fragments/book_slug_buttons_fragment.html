@@ -3,7 +3,9 @@
 <div th:fragment="panel">
     <div class="ProductCard-cart">
         <div class="ProductCard-cartElement">
-            <button class="btn btn_primary btn_outline" data-sendstatus="KEPT" data-bookid="[1111]"
+            <button class="btn btn_primary btn_outline" data-sendstatus="KEPT"
+                    th:attr="data-bookid = ${'postponed/'+slugBook.slug}"
+                    data-bookid="[book-brh-889]"
                     data-btntype="check" data-btnradio="buyblock" data-check="false"
                     data-alttext="Отложена"><span class="btn-icon"><img
                     src="/assets/img/icons/heart.svg" alt="heart.svg"/></span><span
@@ -11,7 +13,9 @@
             </button>
         </div>
         <div class="ProductCard-cartElement">
-            <button class="btn btn_primary btn_outline" data-sendstatus="CART" data-bookid="[1111]"
+            <button class="btn btn_primary btn_outline" data-sendstatus="CART"
+                    th:attr="data-bookid = ${'cart/'+slugBook.slug}"
+                    data-bookid="[book-brh-889]"
                     data-btntype="check" data-btnradio="buyblock" data-check="false"
                     data-alttext="В корзине"><span class="btn-icon"><img
                     src="/assets/img/icons/shopping-basket.svg"
@@ -25,14 +29,25 @@
                                       alt="download.svg"/></span><span
                 class="btn-content">Скачать</span></a>
         </div>
+
         <div class="ProductCard-cartElement">
             <button class="btn btn_primary btn_outline" data-sendstatus="ARCHIVED"
+                    th:attr="data-bookid = ${slugBook.getSlug()}"
                     data-bookid="[1111]" data-btntype="check" data-btnradio="buyblock"
                     data-check="false" data-alttext="Вернуть из архива"><span class="btn-icon"><img
                     src="/assets/img/icons/archive.svg" alt="archive.svg"/></span><span
                     class="btn-content">В архив</span>
             </button>
         </div>
+        <div id="myPopup">
+            <p>Ссылки для скачивания</p>
+            <div th:each="bookFile : ${slugBook.getBookFileEntitiesList()}">
+                <a href="#" th:href="${'/books/download/' + bookFile.hash}"
+                   th:text="${#strings.substringAfter(bookFile.getPath(),'.')}"></a>
+            </div>
+            <span id="myPopup__close" class="close">❎</span>
+        </div>
+        <div id="myOverlay"></div>
     </div>
 </div>
 </html>

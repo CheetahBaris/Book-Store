@@ -1,7 +1,10 @@
 package com.example.MyBookShopApp.services;
 
 import com.example.MyBookShopApp.data.book.BookEntity;
+import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.repositories.BookRepository;
+import liquibase.pro.packaged.L;
+import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,13 +16,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookService {
-    private static final double CART_PERCENT=0.7;
-    private static final double KEPT_PERCENT=0.4;
+    private static final double CART_PERCENT = 0.7;
+    private static final double KEPT_PERCENT = 0.4;
     private final BookRepository bookRepository;
 
     @Autowired
     public BookService(BookRepository bookRepository) {
-         this.bookRepository = bookRepository;
+        this.bookRepository = bookRepository;
 
     }
 
@@ -32,116 +35,182 @@ public class BookService {
 //        return bookRepository.findBooksByAuthorFirstNameContaining(authorName);
 //    }
 
-    public List<BookEntity> getBooksByTitle(String title){
-        return bookRepository.findBooksByTitleContaining(title);
+    public List<BookEntity> getBooksByTitle(String title) throws BookstoreApiWrongParameterException {
+        if (title.length() <= 1) {
+
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        } else {
+            List<BookEntity> data = bookRepository.findBooksByTitleContaining(title);
+            if (data.size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
     }
 
-    public List<BookEntity> getBooksWithPriceBetween(Integer min, Integer max){
-        return bookRepository.findBooksByPriceBetween(min, max);
+    public List<BookEntity> getBooksWithPriceBetween(Integer min, Integer max) throws BookstoreApiWrongParameterException {
+        if (min > max) {
+
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        } else {
+            List<BookEntity> data = bookRepository.findBooksByPriceBetween(min, max);
+            if (data.size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
     }
 
-    public List<BookEntity> getBooksWithPrice(Integer price){
-        return bookRepository.findBooksByPriceIs(price);
+    public List<BookEntity> getBooksWithPrice(Integer price) throws BookstoreApiWrongParameterException {
+
+            List<BookEntity> data =bookRepository.findBooksByPriceIs(price);
+            if (data.size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
     }
 
-    public List<BookEntity> getBooksWithMaxPrice(){
+    public List<BookEntity> getBooksWithMaxPrice() {
         return bookRepository.getBooksWithMaxDiscount();
     }
 
-    public List<BookEntity> getBestsellers(){
-        return bookRepository.getBestsellers();
+    public List<BookEntity> getBestsellers() throws BookstoreApiWrongParameterException {
+
+            List<BookEntity> data =bookRepository.getBestsellers();
+            if (data.size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+         }
     }
 
-    public Page<BookEntity> getPageOfRecommendedBooks(Integer offset, Integer limit){
-        Pageable nextPage = PageRequest.of(offset,limit);
-        return bookRepository.findAll(nextPage);
+    public Page<BookEntity> getPageOfRecommendedBooks(Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
+        Pageable nextPage = PageRequest.of(offset, limit);
+         Page<BookEntity> data= bookRepository.findAll(nextPage);
+            if (data.getContent().size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
+
+
+    public Page<BookEntity> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
+        if (searchWord == null ) {
+
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        } else {
+            Pageable nextPage = PageRequest.of(offset, limit);
+            Page<BookEntity> data = bookRepository.findBookByTitleContaining(searchWord, nextPage);
+
+            if (data.getContent().size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
+
     }
 
-    public Page<BookEntity> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit){
-        Pageable nextPage = PageRequest.of(offset,limit);
-        return bookRepository.findBookByTitleContaining(searchWord,nextPage);
-    }
     public Page<BookEntity> findBookByPubDateBetween(Date fromDateRecent, Date endDateRecent,
-                                                       Integer offset, Integer limit){
+                                                     Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
+        if (fromDateRecent.after(endDateRecent)) {
 
-         Pageable nextPage = PageRequest.of(offset,limit);
-        return bookRepository.findBookByPubDateBetween(fromDateRecent,endDateRecent, nextPage);
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        } else {
+            Pageable nextPage = PageRequest.of(offset, limit);
+            Page<BookEntity> data = bookRepository.findBookByPubDateBetween(fromDateRecent, endDateRecent, nextPage);
+            if (data.getContent().size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
+
+
+
     }
 
-    public Page<BookEntity> findBookEntitiesByTagPage(String tag, Integer offset, Integer limit){
-        Pageable nextPage = PageRequest.of(offset,limit);
 
+    public Page<BookEntity> findBookEntitiesByTagPage(String tag, Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
+        if (tag.length() <= 1) {
 
-        return bookRepository.findBookEntitiesByTag(tag, nextPage);
+            throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
+        } else {
+            Pageable nextPage = PageRequest.of(offset, limit);
+            Page<BookEntity> data = bookRepository.findBookEntitiesByTag(tag, nextPage);
+            if (data.getContent().size() > 0) {
+
+                return data;
+            } else {
+
+                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+            }
+        }
+
     }
-    public Map<String, List<BookEntity>> getTagListMap(){
 
-        return bookRepository.findAll().stream().collect(Collectors.groupingBy(BookEntity::getTag));
+    public Map<String, List<BookEntity>> getTagListMap() throws BookstoreApiWrongParameterException {
+
+        Map<String, List<BookEntity>> data = bookRepository.findAll().stream().collect(Collectors.groupingBy(BookEntity::getTag));
+        if (data.size() > 0) {
+
+            return data;
+        } else {
+
+            throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+        }
+    }
+
+    public BookEntity getBookBySlug(String slug) throws BookstoreApiWrongParameterException {
+
+
+
+            return bookRepository.findBookEntitiesBySlug(slug);
+
      }
-
-//    public void getPageOfBooksByRating(){
-//
-//         for(BookEntity book :bookRepository.findAll()){
-//
-//            book.setRelevance(bookToUserRepository.getBoughtBooks(book.getId()).size()
-//                    +CART_PERCENT*bookToUserRepository.getCartedBooks(book.getId()).size()
-//                    + KEPT_PERCENT*bookToUserRepository.getKeptInBooks(book.getId()).size());
-//            bookRepository.save(book);
-//        }
-//    }
+    public List<BookEntity> getBookEntitiesBySlugIn(List<String> slug) throws BookstoreApiWrongParameterException{
 
 
-    //    private final BookRepository bookRepository;
-//
-//    private final AuthorService authorService;
-//    @Autowired
-//    public BookService(BookRepository bookRepository, AuthorService authorService1) {
-//        this.bookRepository = bookRepository;
-//        this.authorService = authorService1;
-//    }
-//
-//    public List<BooksEntity> getAllBooks() {
-//        return bookRepository.findAll();
-//    }
-//
-//    public boolean updateAuthorById(Long id, AuthorEntity authorEntity, String title, Integer price_old, Integer price) {
-//
-//        if (bookRepository.existsById(id)) {
-//
-//            BooksEntity b = bookRepository.findById(id).get();
-//            b.setAuthorEntity(authorEntity);
-//            b.setTitle(title);
-//            b.setPriceOld(price_old);
-//            b.setPrice(price);
-//            bookRepository.save(b);
-//            return true;
-//
-//        } else {
-//
-//            return false;
-//        }
-//    }
-//
-//    public void crateBook(AuthorEntity authorEntity, String title, Integer priceOld, Integer price) {
-//        BooksEntity b = new BooksEntity();
-//        b.setAuthorEntity(authorEntity);
-//        b.setTitle(title);
-//        b.setPriceOld(priceOld);
-//        b.setPrice(price);
-//        bookRepository.save(b);
-//    }
-//
-//    public void deleteAllBooks() {
-//        bookRepository.deleteAll();
-//    }
-//
-//    public boolean deleteBookById(Long id) {
-//        if (bookRepository.existsById(id)) {
-//            bookRepository.deleteById(id);
-//            return true;
-//        } else {
-//            return false;
-//        }
-//
-//    }
- }
+            return bookRepository.findBookEntitiesBySlugIn(slug);
+
+    }
+
+    public void saveBookEntity(BookEntity book) throws BookstoreApiWrongParameterException {
+        if (!bookRepository.findById(book.getId()).isPresent()) {
+            bookRepository.save(book);
+        } else {
+
+            throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+        }
+    }
+
+    public void saveBooksListEntity(List<BookEntity> books) throws BookstoreApiWrongParameterException {
+
+        if (!new HashSet<>(bookRepository.findAll()).containsAll(books)) {
+            bookRepository.saveAll(books);
+
+        } else {
+
+            throw new BookstoreApiWrongParameterException("No data found with specified parameters");
+        }
+    }
+}
+
