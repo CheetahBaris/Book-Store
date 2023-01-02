@@ -3,6 +3,7 @@ package com.example.MyBookShopApp.repositories;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.user.UserEntity;
+import liquibase.pro.packaged.L;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,7 @@ public interface BookReviewRepository extends JpaRepository<BookReviewEntity,Int
     Long getMaxId();
 
     BookReviewEntity findBookReviewEntitiesByBookIdAndUserId(BookEntity book, UserEntity user);
+    List<BookReviewEntity> findBookReviewEntitiesByBookIdAndBookRating(BookEntity book,int bookRating);
 
 
 }

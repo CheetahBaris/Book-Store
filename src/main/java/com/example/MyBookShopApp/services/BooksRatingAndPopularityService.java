@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,10 +122,25 @@ public class BooksRatingAndPopularityService {
 
         return bookRatingGrade;
     }
+
     public Integer getBookRatingGradeSizeBySlug(String slug){
         BookEntity book =bookRepository.findBookEntitiesBySlug(slug);
 
         return bookReviewRepository.findBookReviewRepositoriesByBookId(book).size();
+    }
+
+    public Integer getStarsRateSize(String slug, int stars){
+         return bookReviewRepository.findBookReviewEntitiesByBookIdAndBookRating(bookRepository.findBookEntitiesBySlug(slug),stars).size();
+    }
+
+    public Map<UserEntity, BookReviewEntity> getFeedBackFromUserBySlug(String slug){
+        List<BookReviewEntity> bookReviewEntityList =bookReviewRepository.findBookReviewRepositoriesByBookId(bookRepository.findBookEntitiesBySlug(slug));
+        Map<UserEntity,BookReviewEntity> userEntities = new HashMap<>();
+        for(BookReviewEntity b:bookReviewEntityList){
+            userEntities.put(b.getUserId(),b);
+         }
+
+        return userEntities;
     }
 
 

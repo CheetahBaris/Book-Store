@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,13 +156,15 @@ public class BookShopPostponedController {
 
     @PostMapping("/changeBookStatus/postponed/remove/{bookid}")
     public String handleRemoveBookFromPostponedRequest(@PathVariable("bookid") String slug, @CookieValue(name =
-            "postponedContents", required = false) String postponedContents, HttpServletResponse response, Model model) {
+            "postponedContents", required = false) String postponedContents, HttpServletResponse response, Model model) throws IOException {
         if (postponedContents != null && !postponedContents.equals("")) {
             ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(postponedContents.split("/")));
             cookieBooks.remove(slug);
             Cookie cookie = new Cookie("postponedContents", String.join("/", cookieBooks));
             cookie.setPath("/");
             response.addCookie(cookie);
+//            response.sendRedirect("/books/postponed");
+
             if(cookie.getValue().length() <=1){
                 model.addAttribute("isCartEmpty", true);
             }else {
@@ -170,12 +173,11 @@ public class BookShopPostponedController {
         } else {
             model.addAttribute("isCartEmpty", true);
         }
-
-        return "redirect:/books/postponed";
+         return "redirect:/books/postponed";
     }
     @PostMapping("/changeBookStatus/postponed/{bookid}")
     public String handlePostponeBookFromBooksSlugRequest(@PathVariable("bookid") String slug, @CookieValue(name =
-            "postponeContents", required = false) String postponeContents, HttpServletResponse response, Model model) {
+            "postponedContents", required = false) String postponeContents, HttpServletResponse response, Model model) {
         if (postponeContents == null || postponeContents.equals("")) {
             Cookie cookie = new Cookie("postponedContents", slug);
             cookie.setPath("/");

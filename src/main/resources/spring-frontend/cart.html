@@ -35,7 +35,8 @@
                         </div>
                         <div class="Cart-block Cart-block_row">
                             <div class="Cart-block Cart-block_info">
-                                <div class="Cart-authorEntity"><a href="#" th:href="@{/books/authorEntity(author=${#strings.substringBefore(book.authorsNames,',')})}"
+                                <div class="Cart-authorEntity"><a href="#" th:href="@{/books/authorEntity(author=${#strings.contains(book.authorsNames,',') ?
+                                 #strings.substringBefore(book.authorsNames,',') : book.authorsNames})}"
                                                                   th:text="${book.authorsNames}">Борис Васильевич Бедный</a>
                                 </div>
                                 <div class="Cart-title"><a href="#" th:text="${book.title}">Жизнь</a>

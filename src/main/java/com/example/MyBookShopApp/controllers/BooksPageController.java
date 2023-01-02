@@ -128,6 +128,12 @@ public class BooksPageController {
                 booksRatingAndPopularityService.getBookRatingGradeBySlug(slug));
         model.addAttribute("slugBookRatingGradeSize",
                 booksRatingAndPopularityService.getBookRatingGradeSizeBySlug(slug));
+        model.addAttribute("fiveStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,5));
+        model.addAttribute("fourStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,4));
+        model.addAttribute("threeStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,3));
+        model.addAttribute("twoStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,2));
+        model.addAttribute("oneStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,1));
+        model.addAttribute("feedBacks",booksRatingAndPopularityService.getFeedBackFromUserBySlug(slug));
         return "books/slug.html";
     }
     @PostMapping("/changeBookStatus")

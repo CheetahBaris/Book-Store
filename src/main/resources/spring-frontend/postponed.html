@@ -36,7 +36,7 @@
                         </div>
                         <div class="Cart-block Cart-block_row">
                             <div class="Cart-block Cart-block_info">
-                                <div class="Cart-authorEntity"><a th:href="@{/books/authorEntity(author=${#strings.substringBefore(book.authorsNames,',')})}"
+                                <div class="Cart-authorEntity"><a th:href="@{/books/authorEntity(author=${#strings.contains(book.authorsNames,',')? #strings.substringBefore(book.authorsNames,',') : book.authorsNames})}"
                                                                   href="#" th:text="${book.authorsNames}">Борис Васильевич Бедный</a>
                                 </div>
                                 <div class="Cart-title"><a th:href="@{'/books/'+${book.slug}}" href="#" th:text="${book.title}" >Жизнь</a>
@@ -87,8 +87,7 @@
                                 <div class="Cart-buttons">
                                     <div class="Cart-btn">
                                         <button class="btn btn_primary btn_outline" data-sendstatus="CART"
-                                                th:attr="data-bookid=${'postpone/cart/'+book.slug}"
-
+                                                th:attr="data-bookid=${'postponed/cart/'+book.slug}"
                                                 data-bookid="[1122]"><span class="btn-icon"><img
                                                 src="/assets/img/icons/shopping-basket.svg" alt="shopping-basket.svg"/></span><span
                                                 class="btn-content">Купить</span>

@@ -41,7 +41,7 @@
                 <div class="Product-comments">
                     <div class="Product-comments-header">
                         <h3 class="Product-comments-title">Отзывы
-                        </h3><span class="Product-comments-amount">567 отзывов</span>
+                        </h3><span class="Product-comments-amount" th:text="${feedBacks.size()+' отзывa(ов)'}">567 отзывов</span>
                     </div>
                 </div>
                 <div th:replace="~{fragments/book_reviews_fragment :: reviewBlock}"></div>
