@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 @Repository
-public interface BookReviewRepository extends JpaRepository<BookReviewEntity,Integer> {
+public interface BookReviewRepository extends JpaRepository<BookReviewEntity,Long> {
     List<BookReviewEntity> findBookReviewRepositoriesByBookId(BookEntity book);
     List<BookReviewEntity> findBookReviewRepositoriesByUserId(UserEntity user);
     @Query(value = "SELECT MAX(id) FROM book_review;",nativeQuery = true)

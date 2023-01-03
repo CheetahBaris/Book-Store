@@ -2,6 +2,7 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.ResourceStorage;
 import com.example.MyBookShopApp.data.book.BookEntity;
+import com.example.MyBookShopApp.data.book.review.BookReviewEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.services.AuthorService;
@@ -9,6 +10,7 @@ import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 
+import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.websocket.server.PathParam;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -134,6 +137,13 @@ public class BooksPageController {
         model.addAttribute("twoStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,2));
         model.addAttribute("oneStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,1));
         model.addAttribute("feedBacks",booksRatingAndPopularityService.getFeedBackFromUserBySlug(slug));
+//        HashMap<HashMap<BookReviewEntity,Integer>,HashMap<BookReviewEntity,Integer>> rate=new HashMap<>();
+//        rate.put(booksRatingAndPopularityService.getAmountOfLikes(slug),booksRatingAndPopularityService.getAmountOfLikes(slug));
+//        model.addAttribute("likesAndDislikes", rate);
+
+        model.addAttribute("likes", booksRatingAndPopularityService.getAmountOfLikes(slug));
+        model.addAttribute("dislikes", booksRatingAndPopularityService.getAmountOfDislikes(slug));
+
         return "books/slug.html";
     }
     @PostMapping("/changeBookStatus")
@@ -152,6 +162,14 @@ public class BooksPageController {
         bookService.saveBookEntity(bookToUpdate); //save new path in db here
 
         return "redirect:/books/" + slug;
+    }
+    @PostMapping("/rateBookReview")
+    public String rateBoolReviewFunction(@PathParam("value") Integer value,
+                                         @PathParam("reviewId") Long reviewId,
+                                         @PathParam("bookId") String bookId ){
+
+         booksRatingAndPopularityService.likeOrDislikeFunction(value,reviewId);
+        return "redirect:/books/" + bookId;
     }
 
     @GetMapping("/download/{hash}")

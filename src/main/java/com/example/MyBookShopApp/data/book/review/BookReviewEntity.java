@@ -5,6 +5,7 @@ import com.example.MyBookShopApp.data.user.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "book_review")
@@ -30,6 +31,8 @@ public class BookReviewEntity {
 
     @Column(name = "book_rating", columnDefinition = "SMALLINT")
     private int bookRating;
+    @OneToMany(mappedBy = "reviewId")
+    private List<BookReviewLikeEntity> bookReviewLikeEntity;
 
     public Long getId() {
         return id;
@@ -78,4 +81,13 @@ public class BookReviewEntity {
     public void setBookRating(int bookRating) {
         this.bookRating = bookRating;
     }
+
+    public List<BookReviewLikeEntity> getBookReviewLikeEntity() {
+        return bookReviewLikeEntity;
+    }
+
+    public void setBookReviewLikeEntity(List<BookReviewLikeEntity> bookReviewLikeEntity) {
+        this.bookReviewLikeEntity = bookReviewLikeEntity;
+    }
+
 }

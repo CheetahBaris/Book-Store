@@ -44,16 +44,22 @@
                             </p>
                         </div>
                         <div class="Comment-footer">
-                            <div class="Comment-appeal">
-                                <button class="btn btn_white btn_like" data-btntype="check" data-check="false"
+                            <div class="Comment-appeal" >
+                                <button class="btn btn_white btn_like"
+                                        th:attr="data-likeid= ${feedBack.value.getId()}"
+                                        data-btntype="check" data-check="false"
                                         data-btnradio="one1" data-likeid="333"><span class="btn-icon"><img
                                         src="/assets/img/icons/comment/like.svg" alt="like.svg"/></span><span
-                                        class="btn-content">500</span>
+                                        class="btn-content"  th:each="like : ${likes}">
+                                    <p th:text="${like.key.getId()==feedBack.value.getId() ? like.value :''}">500</p></span>
                                 </button>
-                                <button class="btn btn_white btn_dislike" data-btntype="check" data-check="false"
+                                <button class="btn btn_white btn_dislike"
+                                        th:attr="data-likeid=${feedBack.value.getId()}"
+                                        data-btntype="check" data-check="false"
                                         data-btnradio="one1" data-likeid="333"><span class="btn-icon"><img
                                         src="/assets/img/icons/comment/dislike.svg" alt="dislike.svg"/></span><span
-                                        class="btn-content">50</span>
+                                        class="btn-content"  th:each="dislike : ${dislikes}">
+                                    <p th:text="${dislike.key.getId()==feedBack.value.getId()?dislike.value :''}">50</p></span>
                                 </button>
                             </div>
                             <button class="Spoiler-trigger btn btn_primary btn_nr" type="button"
