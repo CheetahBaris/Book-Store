@@ -5,6 +5,8 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
@@ -12,10 +14,7 @@ import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -30,16 +29,19 @@ public class AuthorsPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final BookstoreUserRegister userRegister;
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
     public AuthorsPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                 GenreService genreService, AuthorService authorService) {
+                                 GenreService genreService, AuthorService authorService, BookstoreUserRegister userRegister, JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
 
     @ModelAttribute("booksListFull")
@@ -117,20 +119,39 @@ public class AuthorsPageController {
 
 
     @GetMapping("/authors")
-    public String authorsPage() {
+    public String authorsPage(@CookieValue(value = "token", required = false) String token, Model model) {
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
 
         return "/authors/index.html";
+
+
     }
 
     @GetMapping("books/authors")
     public String getAuthorsSlug(@RequestParam(value = "author", required = false) String author, @RequestParam("offset") Integer offset,
-                                @RequestParam("limit") Integer limit, Model model) {
+                                @RequestParam("limit") Integer limit,
+                                 @CookieValue(value = "token", required = false) String token, Model model) {
 
 
         model.addAttribute("AuthorsBooksList",
                 authorService.getBookEntitiesByAuthorName(author, offset, limit));
         model.addAttribute("Author", authorService.findAuthorEntitiesByName(author));
         model.addAttribute("AuthorsFullBookListInteger", authorService.getGetBookEntitiesByAuthorNameSize());
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "/authors/slug.html";
     }
 
@@ -145,12 +166,20 @@ public class AuthorsPageController {
     }
 
     @GetMapping("books/authorEntity")
-    public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author, Model model) {
+    public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author,
+                                      @CookieValue(value = "token", required = false) String token,Model model) {
 
         model.addAttribute("AuthorsBooksList",
                 authorService.getBookEntitiesByAuthorName(author, 0, 10));
         model.addAttribute("Author", authorService.findAuthorEntitiesByName(author));
+        if(token != null){
 
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "/books/author.html";
     }
 }

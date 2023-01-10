@@ -1022,29 +1022,27 @@ insert into books ( pub_date, is_bestseller, slug, title, image, discount, relev
 insert into books ( pub_date, is_bestseller, slug, title, image, discount, relevance, tag, description , price) values ( '2014-07-03', 1, 'book-gbr-964', 'Cardify', 'http://dummyimage.com/600x945.png/ff4444/ffffff', 0.47, 0, 'gamer''s choice', 'adipiscing elit proin interdum mauris non ligula pellentesque ultrices phasellus id sapien in', 532);
 insert into books ( pub_date, is_bestseller, slug, title, image, discount, relevance, tag, description , price) values ( '2006-08-02', 1, 'book-igk-029', 'Alpha', 'http://dummyimage.com/600x949.png/dddddd/000000', 0.38, 0, 'sports', 'turpis eget elit sodales scelerisque mauris sit amet eros suspendisse accumsan tortor quis turpis sed ante vivamus tortor duis', 1093);
 
-
-insert into users (balance, hash, name, reg_time) values (2610, '8yOhM0CL9NZ', 'Derick', '9/4/2022');
-insert into users ( balance, hash, name, reg_time) values ( 8643, 'WNWbtEKYE1HK', 'Antonin', '8/31/2022');
-insert into users ( balance, hash, name, reg_time) values ( 3803, 'QwODb9', 'Amil', '12/9/2022');
-insert into users ( balance, hash, name, reg_time) values ( 883, 'gKGzbyF', 'Caldwell', '10/7/2022');
-insert into users ( balance, hash, name, reg_time) values ( 9901, 'GQJqUz', 'Sada', '10/24/2022');
-insert into users ( balance, hash, name, reg_time) values ( 4711, 'jMpo7yB', 'Kristoffer', '5/31/2022');
-insert into users ( balance, hash, name, reg_time) values ( 8538, 'Op0E1Lv', 'Ortensia', '1/23/2022');
-insert into users ( balance, hash, name, reg_time) values ( 7734, 'TXjlMMcymIpd', 'Dewie', '7/17/2022');
-insert into users ( balance, hash, name, reg_time) values ( 1120, 'QigYQcbsr', 'Ed', '3/17/2022');
-insert into users ( balance, hash, name, reg_time) values (8531, 'M43FVnWFV', 'Halsy', '8/9/2022');
-insert into users ( balance, hash, name, reg_time) values ( 7261, 'aD9pY5j5K0', 'Henderson', '8/26/2022');
-insert into users ( balance, hash, name, reg_time) values ( 9270, 'lecLjdaTc', 'Malinde', '4/1/2022');
-insert into users ( balance, hash, name, reg_time) values ( 5057, 'xTfSC8i', 'Babita', '10/25/2022');
-insert into users ( balance, hash, name, reg_time) values ( 1934, 'v2RFKmQQvd', 'Lavena', '8/8/2022');
-insert into users ( balance, hash, name, reg_time) values ( 9326, '15B0zfpMaTP', 'Burnard', '3/13/2022');
-insert into users ( balance, hash, name, reg_time) values ( 435, 'HCpnQsH30599', 'Ernestus', '4/20/2022');
-insert into users ( balance, hash, name, reg_time) values ( 7341, '7L54vGR', 'Tan', '7/18/2022');
-insert into users ( balance, hash, name, reg_time) values ( 265, 'dcv0psZ684K', 'Jennie', '8/29/2022');
-insert into users ( balance, hash, name, reg_time) values ( 6837, 'pR1K5VdTP9bY', 'Natasha', '8/29/2022');
-insert into users ( balance, hash, name, reg_time) values ( 6064, 'V9mwhRtE6Ue', 'Reese', '5/9/2022');
-insert into users ( balance, hash, name, reg_time) values ( 6698, 'fCfPYg', 'Nana', '9/13/2022');
-
+insert into users (balance, hash, name, reg_time, email, password, phone) values (2795, '4912ed5685e0a09294a038defa811ad8c5e4075f480c95146b1b654222308c8b', 'Biddy Uzzell', '2005-12-06', 'buzzell0@quantcast.com', 'klFtYmT', '+62 (515) 229-8506');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (9199, '226d0714a55ae3bf31811c52aaad52e3a22804198fbdd77ffb27600e62f226ad', 'Godart Matusovsky', '2022-05-06', 'gmatusovsky1@etsy.com', 'WIBGHMsCW5', '+86 (519) 995-3953');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (5242, '8c6b047d4fe646045e36eec0d5b1de6eca93602138bbbe214fd5d6c37ff4930c', 'Desmund Lafranconi', '2006-09-02', 'dlafranconi2@icq.com', 'eOS7Xie', '+86 (213) 222-9183');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (2815, 'c9f6913077512ca9cb43b6586cc06a0d111908b4a669b349e755befd340fcd09', 'Elias Marcroft', '2005-08-29', 'emarcroft3@foxnews.com', 'W6H2yCGr6Bv', '+62 (270) 276-0711');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (9277, '33b67bc480c11e985aa3a7403798bef9ca4d20add8f226b94056f37e79b3438e', 'Fayina Norgan', '2011-10-15', 'fnorgan4@pbs.org', 'B8RnjdeRZh7', '+374 (522) 941-3594');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (8793, 'd5c691f1c464865ca9450a339cf9bbfe225dbcf588bc35359f4aa5f9169f3bb5', 'Malanie Salan', '2018-07-30', 'msalan5@wordpress.org', 'QwOvOqo5Gm', '+86 (576) 842-0244');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (5764, 'a80c4e71d1e3b81a7e726e54130fe9e33a2c23b8b96c2728c72612d37d00cd93', 'Huberto Oglevie', '2004-10-24', 'hoglevie6@infoseek.co.jp', 'RMg5zQ', '+86 (934) 398-6516');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (9849, 'edf8b5ae9f9a376846f80ed139f72a5800f07f33eae8daea56c2295ed067a754', 'Daven Synan', '2011-02-17', 'dsynan7@nature.com', 'BJApiHf', '+86 (141) 614-4056');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (1476, 'ac8ce36c951c55ae8254679f7a80b84db0f5505cf8e5a5955a21196399dc27c5', 'Nertie Stive', '2022-07-11', 'nstive8@godaddy.com', 'Z43MzhW', '+1 (207) 744-3357');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (9396, 'ef96f1987a56a72bab94b5b2cc5fe9ac9909555b3b0b1ac236a1ddee9eb6e785', 'Germaine Pawelek', '2008-12-15', 'gpawelek9@delicious.com', 'r81y0f57Lu', '+7 (491) 538-9690');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (9259, '52e79df4ec3a020b51afdb204cb4c5d6ff952319d76efaf60033770c39a6b236', 'Coleman Sonnenschein', '2012-05-04', 'csonnenscheina@about.com', 'sXBjP9RVkAD4', '+880 (111) 761-4385');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (5252, 'a6c8f2e8bc89cc40869c5dc1b808227afb51e741d3861f0efa10637bee498109', 'Augustine McCleverty', '2017-09-22', 'amcclevertyb@sourceforge.net', 'AlCY3Kj', '+963 (919) 437-5208');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (3457, '24615c09801bd036ff6631b11c642f4eedcf88cae499ec5081d1b93d6c121682', 'Kaitlyn Keers', '2010-03-29', 'kkeersc@blogs.com', 'cqCdD8MntAQ', '+7 (236) 615-7757');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (178, '30ab058ec3f39bec5d9ceaeb365c1ab53c0c92f2bc9511aede40a59e3995f89f', 'Rip Penfold', '2015-07-04', 'rpenfoldd@moonfruit.com', 'jN9VyjDybO6d', '+387 (775) 322-3076');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (5396, '250897bd858861de7e47204f40b9de5bb51b6338d7462fa3069c5a3a3b6e676a', 'Benn Mainland', '2003-07-14', 'bmainlande@ucla.edu', 'hSmlBdKUVPY', '+63 (532) 566-3200');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (7760, 'e0099fae6c792c99a473f78c8cfe9f6989c5d92167d442c04f3149fa0bb8ab09', 'Micaela Ruprich', '2015-09-01', 'mruprichf@woothemes.com', 'mdCwMp', '+86 (274) 838-1536');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (3253, '7139a48525278663974a56b40e42f8f38964472c9914d6aaa5286ac7080453d7', 'Darelle Plews', '2008-04-15', 'dplewsg@prweb.com', 'BQVgqnn', '+1 (952) 639-5448');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (8099, 'e545cb9a6dc0b8b7a459b5e6b09d4967a057d0639966dab845f613dde691270a', 'Lorant Arpin', '2016-05-05', 'larpinh@timesonline.co.uk', '3O5fDj7EYU', '+351 (893) 626-6205');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (569, '96798a0fae902b909f54b3f47b2278778f36a92ac9fc9901d3ee5f26add0a17c', 'Sunny Heindrick', '2005-02-24', 'sheindricki@gizmodo.com', 'DltRW4HAJw5', '+57 (403) 532-7438');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (4706, '1fa551d53782e8fa28c45a641658e9a05260c0c88a2d9d8239a9c58ac11c21e5', 'Sashenka Ferrand', '2019-02-14', 'sferrandj@tinyurl.com', 'N6nkM0w0L3b', '+86 (335) 403-6630');
+insert into users (balance, hash, name, reg_time, email, password, phone) values (1857, '1028b137a0901e35ec107f53c0e2275e6e468c6341157a49211f5b09281a433f', 'Locke Deppe', '2014-06-16', 'ldeppek@independent.co.uk', 'vnOSu7ncmoJ', '+30 (905) 170-7647');
 
 
 

@@ -1,0 +1,38 @@
+.popup-fade:before {
+    content: '';
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.7;
+    z-index: 9999;
+
+}
+.popup {
+    position: fixed;
+    font-family: "Roboto", cursive;
+    top: 30%;
+    left: 50%;
+    padding: 30px 30px 70px;
+    width: 360px;
+    margin-left: -200px;
+    background: #fff;
+    border: 1px solid orange;
+    z-index: 99999;
+    opacity: 1;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 20px;
+
+}
+.popup img {
+    width: 82px;
+    margin-bottom: 15px;
+}
+.popup p {
+    margin-bottom: 40px;
+    font-size: 18px;
+}

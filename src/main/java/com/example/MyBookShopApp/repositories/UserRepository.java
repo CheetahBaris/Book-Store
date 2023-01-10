@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value = "SELECT MAX(id) FROM users;",nativeQuery = true)
     Long getMaxId();
 
+    UserEntity findUserEntitiesByEmail(String email);
+    UserEntity findUserEntitiesByPhone(String phone);
 }

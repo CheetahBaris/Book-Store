@@ -4,11 +4,12 @@ import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
-import liquibase.pro.packaged.P;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,15 +32,20 @@ public class BookShopPostponedController {
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final JWTUtil jwtUtil;
+    private final BookstoreUserRegister userRegister;
 
     @Autowired
     public BookShopPostponedController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                  GenreService genreService, AuthorService authorService) {
+                                       GenreService genreService, AuthorService authorService, JWTUtil jwtUtil, BookstoreUserRegister userRegister) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.jwtUtil = jwtUtil;
+        this.userRegister = userRegister;
     }
+
 
     @ModelAttribute(name = "postponedBooks")
     public List<BookEntity> postponedBooks() {
@@ -121,7 +127,7 @@ public class BookShopPostponedController {
 
     @GetMapping("/postponed")
     public String handlePostponeRequest(@CookieValue(value = "postponedContents", required = false) String postponedContents,
-                                    Model model) throws BookstoreApiWrongParameterException {
+                                        @CookieValue(value = "token", required = false) String token, Model model) throws BookstoreApiWrongParameterException {
 
         if (postponedContents == null || postponedContents.length()<=1) {
             model.addAttribute("isPostponedEmpty", true);
@@ -150,6 +156,14 @@ public class BookShopPostponedController {
             model.addAttribute("buyAllPostponedBooks", booksIDs.toString());
         }
 
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "postponed.html";
     }
 

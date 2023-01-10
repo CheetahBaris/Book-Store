@@ -68,14 +68,37 @@ public class BooksRatingAndPopularityService {
         return bookRepository.getBookEntityFromRelevance(nextPage);
     }
 
-    public Integer gradeBookFunctionAdmin(String slug, Integer value) {
+    public void textBookFunction(String slug, String text, UserEntity user){
 
         BookEntity book = bookRepository.findBookEntitiesBySlug(slug);
 
-        if (bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, userRepository.findUserEntitiesByName("admin")) != null) {
+        if (bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, user) != null) {
 
             BookReviewEntity bookReviewEntity =
-                    bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, userRepository.findUserEntitiesByName("admin"));
+                    bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, user);
+            bookReviewEntity.setText(text);
+             bookReviewRepository.save(bookReviewEntity);
+        } else {
+
+            BookReviewEntity bookReviewEntity = new BookReviewEntity();
+            bookReviewEntity.setBookId(book);
+            bookReviewEntity.setTime(LocalDateTime.now());
+            bookReviewEntity.setText(text);
+            bookReviewEntity.setUserId(user);
+            bookReviewRepository.saveAndFlush(bookReviewEntity);
+        }
+
+
+    }
+
+    public void gradeBookFunction(String slug, Integer value, UserEntity user) {
+
+        BookEntity book = bookRepository.findBookEntitiesBySlug(slug);
+
+        if (bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, user) != null) {
+
+            BookReviewEntity bookReviewEntity =
+                    bookReviewRepository.findBookReviewEntitiesByBookIdAndUserId(book, user);
             bookReviewEntity.setBookRating(value);
             bookReviewRepository.save(bookReviewEntity);
         } else {
@@ -85,22 +108,9 @@ public class BooksRatingAndPopularityService {
             bookReviewEntity.setTime(LocalDateTime.now());
             bookReviewEntity.setBookRating(value);
             bookReviewEntity.setText("");
-
-            if (userRepository.findUserEntitiesByName("admin") == null) {
-
-                UserEntity admin = new UserEntity();
-                admin.setBalance(1);
-                admin.setHash("ADMIN");
-                admin.setName("admin");
-                admin.setRegTime(LocalDateTime.now());
-
-                userRepository.save(admin);
-            }
-            bookReviewEntity.setUserId(userRepository.findUserEntitiesByName("admin"));
+            bookReviewEntity.setUserId(user);
             bookReviewRepository.saveAndFlush(bookReviewEntity);
         }
-
-        return getBookRatingGradeBySlug(slug);
     }
 
     public Integer getBookRatingGradeBySlug(String slug) {
@@ -145,21 +155,21 @@ public class BooksRatingAndPopularityService {
         return userEntities;
     }
 
-    public void likeOrDislikeFunction(int value, Long reviewId) {
+    public void likeOrDislikeFunction(int value, Long reviewId, UserEntity user) {
 
         if (bookReviewLikeRepository.findBookReviewLikeEntitiesByReviewIdAndUserId(
-                bookReviewRepository.findById(reviewId).get(), userRepository.findUserEntitiesByName("admin")) == null) {
+                bookReviewRepository.findById(reviewId).get(),user) == null) {
 
             BookReviewLikeEntity bookReviewLikeEntity = new BookReviewLikeEntity();
             bookReviewLikeEntity.setTime(LocalDateTime.now());
             bookReviewLikeEntity.setReviewId(bookReviewRepository.findById(reviewId).get());
-            bookReviewLikeEntity.setUserId(userRepository.findUserEntitiesByName("admin"));
+            bookReviewLikeEntity.setUserId(user);
             bookReviewLikeEntity.setValue((short) value);
             bookReviewLikeRepository.save(bookReviewLikeEntity);
         } else {
 
             BookReviewLikeEntity bookReviewLikeEntity = bookReviewLikeRepository.findBookReviewLikeEntitiesByReviewIdAndUserId(
-                    bookReviewRepository.findById(reviewId).get(), userRepository.findUserEntitiesByName("admin"));
+                    bookReviewRepository.findById(reviewId).get(),user);
             bookReviewLikeEntity.setValue((short) value);
             bookReviewLikeRepository.save(bookReviewLikeEntity);
 

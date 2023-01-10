@@ -4,16 +4,16 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -27,16 +27,23 @@ public class RecentBooksPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final BookstoreUserRegister userRegister;
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
-    public RecentBooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                     GenreService genreService, AuthorService authorService) {
+    public RecentBooksPageController(BookService bookService,
+                                     BooksRatingAndPopularityService booksRatingAndPopularityService,
+                                     GenreService genreService,
+                                     AuthorService authorService,
+                                     BookstoreUserRegister userRegister,
+                                     JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
 
     @ModelAttribute("booksListFull")
@@ -103,6 +110,24 @@ public class RecentBooksPageController {
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
+    @GetMapping("/books/recent")
+    public String getBookRecentPage(@RequestParam(value = "from", required = false) String from,
+                                    @RequestParam(value = "to", required = false) String to,
+                                    @RequestParam(value = "offset", required = false) Integer offset,
+                                    @RequestParam(value = "limit", required = false) Integer limit,
+                                    @CookieValue(value = "token", required = false) String token,
+                                    Model model) {
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
+
+        return "/books/recent.html";
+    }
     @GetMapping("/books/page/recent")
     @ResponseBody
     public BooksPageDto getRecentPage(@RequestParam(value = "from", required = false) String from,
@@ -137,12 +162,5 @@ public class RecentBooksPageController {
                 bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, offset + 1, limit).getContent(), offset + 1, limit));
     }
 
-    @GetMapping("/books/recent")
-    public String getBookRecentPage(@RequestParam(value = "from", required = false) String from,
-                                    @RequestParam(value = "to", required = false) String to,
-                                    @RequestParam(value = "offset", required = false) Integer offset,
-                                    @RequestParam(value = "limit", required = false) Integer limit) {
 
-        return "/books/recent.html";
-    }
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <footer class="Footer" th:fragment="footer">
+  <link rel="stylesheet" href="/assets/css/ChooseLanguage.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
   <script type="text/javascript">
     $(document).ready(function (){
@@ -52,15 +53,15 @@
           <li class="menu-item" th:class="${contacts}"><a class="menu-link" th:href="@{/contacts}"
                                                       href="/contacts.html" th:text="#{topbar.contacts}">Контакты</a>
           </li>
-          <li class="menu-item">
-            <span th:text="#{footer.language}">Выбор языка</span>
-            <select id="locales">
-              <option value=" "></option>
-              <option value="en">English</option>
-              <option value="ru">Русский</option>
-            </select>
-          </li>
         </ul>
+        <div class="chooseLanguage">
+          <span th:text="#{footer.language}">Язык</span>
+          <select class="selector" id="locales" >
+            <option value=" "></option>
+            <option value="en">English</option>
+            <option value="ru">Русский</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>

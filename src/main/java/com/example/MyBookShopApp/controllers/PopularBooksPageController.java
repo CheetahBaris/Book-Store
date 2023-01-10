@@ -4,6 +4,8 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
@@ -11,10 +13,7 @@ import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,17 +27,25 @@ public class PopularBooksPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final BookstoreUserRegister userRegister;
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
-    public PopularBooksPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                      GenreService genreService, AuthorService authorService) {
+    public PopularBooksPageController(BookService bookService,
+                                      BooksRatingAndPopularityService booksRatingAndPopularityService,
+                                      GenreService genreService,
+                                      AuthorService authorService,
+                                      BookstoreUserRegister userRegister,
+                                      JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
+
 
     @ModelAttribute("booksListFull")
     public List<BookEntity> bookListFull() {
@@ -106,13 +113,21 @@ public class PopularBooksPageController {
 
     @GetMapping("/books/popular")
     public String getBookPopular(@RequestParam(value = "offset", required = false) Integer offset,
-                                 @RequestParam(value = "limit", required = false) Integer limit, Model model) {
+                                 @RequestParam(value = "limit", required = false) Integer limit,
+                                 @CookieValue(value = "token", required = false) String token,
+                                 Model model) {
 
 
         model.addAttribute("popularBooks",
                 authorService.converterBookListToListWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 10).getContent(), 0, 10));
+        if(token != null){
 
-
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "/books/popular.html";
     }
 

@@ -1,6 +1,9 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.data.user.UserEntity;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.services.BookService;
@@ -27,15 +30,21 @@ public class MainPageController {
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
 
+    private final BookstoreUserRegister userRegister;
     private final GenreService genreService;
+    private final JWTUtil jwtUtil;
+
 
     @Autowired
     public MainPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                              GenreService genreService, AuthorService authorService) {
+                              GenreService genreService, AuthorService authorService,
+                              BookstoreUserRegister userRegister, JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
 
     @ModelAttribute("booksListFull")
@@ -102,7 +111,16 @@ public class MainPageController {
     }
 
     @GetMapping("/")
-    public String mainPage() {
+    public String mainPage(@CookieValue(value = "token", required = false) String token, Model model) {
+
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
 
         return "index";
 
@@ -118,11 +136,20 @@ public class MainPageController {
 
     @GetMapping("/books/tags")
     public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "limit", required = false) Integer limit, Model model) throws BookstoreApiWrongParameterException {
+                             @RequestParam(value = "limit", required = false) Integer limit,
+                             @CookieValue(value = "token", required = false) String token, Model model) throws BookstoreApiWrongParameterException {
         model.addAttribute("tagListMap", tagListMap());
         model.addAttribute("map", authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
         model.addAttribute("TagName", tag);
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "/tags/index.html";
     }
 
@@ -144,11 +171,6 @@ public class MainPageController {
         return "/documents/index.html";
     }
 
-
-    @GetMapping("/signin")
-    public String getSingnInPage() {
-        return "/signin.html";
-    }
 
     @GetMapping("/about")
     public String getAboutPage() {

@@ -45,7 +45,7 @@
                 </div>
             </button>
         </div>
-        <div class="ProductCard-assessment">
+        <div class="ProductCard-assessment" th:if="${curUsrStatus=='authorized'}">
             <span class="ProductCard-titleProp">Оцените книгу:</span>
             <span class="Rating Rating_input" th:attr="data-bookid=${slugBook.slug}"
                   data-bookid="book-sbf-719"><span

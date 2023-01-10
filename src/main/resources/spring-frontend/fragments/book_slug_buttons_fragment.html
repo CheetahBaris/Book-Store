@@ -23,7 +23,7 @@
             </button>
         </div>
     </div>
-    <div class="ProductCard-cart">
+    <div class="ProductCard-cart" th:if="${curUsrStatus=='authorized'}">
         <div class="ProductCard-cartElement"><a class="btn btn_primary btn_outline" href="#"><span
                 class="btn-icon"><img src="/assets/img/icons/download.svg"
                                       alt="download.svg"/></span><span
@@ -45,7 +45,7 @@
                 <a href="#" th:href="${'/books/download/' + bookFile.hash}"
                    th:text="${#strings.substringAfter(bookFile.getPath(),'.')}"></a>
             </div>
-            <span id="myPopup__close" class="close">❎</span>
+            <span id="myPopup__close" class="close">✖</span>
         </div>
         <div id="myOverlay"></div>
     </div>

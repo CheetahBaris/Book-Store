@@ -19,7 +19,7 @@
     <script defer src="/assets/js/scripts.min.js?v=87821122"></script>
 </head>
 <body class="Site">
-<header class="Header" th:replace="~{fragments/common_header_fragment :: head(status='unauthorized')}"></header>
+<header class="Header" th:replace="~{fragments/common_header_fragment :: head( status=${curUsrStatus})}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">
@@ -42,6 +42,21 @@
                     <div class="Product-comments-header">
                         <h3 class="Product-comments-title">Отзывы
                         </h3><span class="Product-comments-amount" th:text="${feedBacks.size()+' отзывa(ов)'}">567 отзывов</span>
+                    </div>
+                    <strong class="Comments-title" th:text="${curUsrStatus=='authorized'?'Написать отзыв': 'Автороизуйтесь чтобы написать отзыв'}">Написать отзыв
+                    </strong>
+                    <div class="Comments-addComment" th:if="${curUsrStatus=='authorized'}">
+                        <form class="form" action="#" method="post" th:attr="data-bookid=${slugBook.slug}"
+                              data-bookid="1111">
+                            <div class="form-group">
+                                <textarea class="form-textarea Comments-review" name="review" id="review"
+                                          placeholder="Текст отзыва" data-validate="require"></textarea>
+                            </div>
+                            <div class="form-group Comments-sendReview">
+                                <button class="btn btn_warning" type="submit">Отправить отзыв
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div th:replace="~{fragments/book_reviews_fragment :: reviewBlock}"></div>

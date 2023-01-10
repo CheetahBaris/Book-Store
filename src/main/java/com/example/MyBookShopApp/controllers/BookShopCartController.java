@@ -4,11 +4,12 @@ import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
-import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,19 +35,22 @@ public class BookShopCartController {
 
     private final BookService bookService;
 
-
+    private final BookstoreUserRegister userRegister;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
-    public BookShopCartController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                 GenreService genreService, AuthorService authorService) {
+    public BookShopCartController(BookService bookService, BookstoreUserRegister userRegister,
+                                  BooksRatingAndPopularityService booksRatingAndPopularityService,
+                                  GenreService genreService, AuthorService authorService, JWTUtil jwtUtil) {
         this.bookService = bookService;
+        this.userRegister = userRegister;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.jwtUtil = jwtUtil;
     }
 
     @ModelAttribute("booksListFull")
@@ -74,6 +77,7 @@ public class BookShopCartController {
                 .min(Comparator.comparing(List::size)).get();
         return bigList.size();
     }
+
 
     @ModelAttribute("booksList")
     public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
@@ -130,6 +134,7 @@ public class BookShopCartController {
 
     @GetMapping("/cart")
     public String handleCartRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                    @CookieValue(value = "token", required = false) String token,
                                     Model model) throws BookstoreApiWrongParameterException {
         if (cartContents == null || cartContents.length()<=1 ) {
             model.addAttribute("isCartEmpty", true);
@@ -153,6 +158,16 @@ public class BookShopCartController {
             model.addAttribute("finalPriceOld",sumOld);
 
         }
+
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
+
 
         return "cart.html";
     }

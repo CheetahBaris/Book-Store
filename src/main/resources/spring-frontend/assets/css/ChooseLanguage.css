@@ -1,0 +1,15 @@
+.chooseLanguage{
+    font-family: "Roboto", cursive;
+    background: #787373;
+    /*border: 1px solid #ffffff;*/
+    border-radius: 20px;
+    text-align: center;
+    width: 85px;
+    font-size: 17px;
+
+}.selector{
+     border-radius: 20px;
+     text-align: center;
+     min-width: 85px;
+     min-height: 10px;
+ }

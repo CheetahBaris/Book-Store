@@ -21,7 +21,7 @@
                 <div class="Comment-content">
                     <div class="Spoiler">
                         <div class="Spoiler-visible" >
-                            <p th:text="${#strings.substring(feedBack.value.getText(),0,feedBack.value.getText().length()/2)+'...'}">Lorem ipsum dolor sit amet, consectetuer adipiscing elit doli. Aenean commodo ligula eget
+                            <p th:text="${feedBack.value.getText().length() >= 100?#strings.substring(feedBack.value.getText(),0,feedBack.value.getText().length()/2)+'...':feedBack.value.getText()}">Lorem ipsum dolor sit amet, consectetuer adipiscing elit doli. Aenean commodo ligula eget
                                 dolor. Aenean massa. Cumtipsu sociis natoque penatibus et magnis dis parturient
                                 montesti,
                                 nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eutu, pretiumem.
@@ -34,7 +34,7 @@
                                 vitae.
                             </p>
                         </div>
-                        <div class="Spoiler-hide">
+                        <div class="Spoiler-hide" th:if="${feedBack.value.getText().length() >= 100}">
                             <p th:text="${#strings.substring(feedBack.value.getText(),feedBack.value.getText().length()/2,feedBack.value.getText().length())}">Первая книга - сборник повестей и рассказов "Большой поток" - посвящена людям
                                 леспромхоза.
                                 Автор книг "Рассказы" (1954), "Неразменное счастье. Повести и рассказы" (1962). Наиболее

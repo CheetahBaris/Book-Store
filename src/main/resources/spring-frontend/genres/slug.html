@@ -18,7 +18,7 @@
 </head>
 <body class="Site">
 <header class="Header"
-        th:replace="~{fragments/common_header_fragment :: head(status='unauthorized')}"></header>
+        th:replace="~{fragments/common_header_fragment :: head(status=${curUsrStatus})}"></header>
 <div class="Middle">
     <div class="wrap">
         <main class="Middle-main">

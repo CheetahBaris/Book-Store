@@ -4,6 +4,8 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
@@ -11,10 +13,7 @@ import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,17 +27,21 @@ public class GenresPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final BookstoreUserRegister userRegister;
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
     public GenresPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                GenreService genreService, AuthorService authorService) {
+                                GenreService genreService, AuthorService authorService, BookstoreUserRegister userRegister, JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
+
 
     @ModelAttribute("booksListFull")
     public List<BookEntity> bookListFull() {
@@ -105,21 +108,37 @@ public class GenresPageController {
     }
 
     @GetMapping("/genres")
-    public String getGenres(Model model) {
+    public String getGenres(@CookieValue(value = "token", required = false) String token, Model model) {
 
         model.addAttribute("GenresParentList", genreService.findGenreEntitiesByParentId(0L));
         model.addAttribute("AllGenresList", genreService.getAllGenres());
+        if(token != null){
 
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
         return "/genres/index.html";
     }
 
     @GetMapping("books/genres")
-    public String getBooksByGenreSlug(@RequestParam(value = "genre", required = false) String genre, Model model) {
+    public String getBooksByGenreSlug(@RequestParam(value = "genre", required = false) String genre,
+                                      @CookieValue(value = "token", required = false) String token,Model model) {
 
 
         model.addAttribute("GenresList", authorService.converterBookListToListWithAuthors(
                 genreService.getBooksPageByGenre(genre, 0, 10), 0, 10));
         model.addAttribute("GenreTag", genre);
+        if(token != null){
+
+            model.addAttribute("curUsrStatus","authorized");
+            model.addAttribute("curUsr",userRegister.getCurrentUser());
+        }else {
+            model.addAttribute("curUsrStatus","unauthorized");
+            model.addAttribute("curUsr",null);
+        }
 
         return "/genres/slug.html";
     }

@@ -5,6 +5,8 @@ import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.errs.EmptySearchException;
+import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
@@ -26,16 +28,19 @@ public class SearchPageController {
     private final BookService bookService;
     private final BooksRatingAndPopularityService booksRatingAndPopularityService;
     private final AuthorService authorService;
-
+    private final BookstoreUserRegister userRegister;
+    private final JWTUtil jwtUtil;
     private final GenreService genreService;
 
     @Autowired
     public SearchPageController(BookService bookService, BooksRatingAndPopularityService booksRatingAndPopularityService,
-                                GenreService genreService, AuthorService authorService) {
+                                GenreService genreService, AuthorService authorService, BookstoreUserRegister userRegister, JWTUtil jwtUtil) {
         this.bookService = bookService;
         this.booksRatingAndPopularityService = booksRatingAndPopularityService;
         this.genreService = genreService;
         this.authorService = authorService;
+        this.userRegister = userRegister;
+        this.jwtUtil = jwtUtil;
     }
 
     @ModelAttribute("booksListFull")
@@ -104,6 +109,7 @@ public class SearchPageController {
 
     @GetMapping(value = {"/search", "/search/{searchWord}"})
     public String getSearchResult(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto,
+                                  @CookieValue(value = "token", required = false) String token,
                                   Model model) throws BookstoreApiWrongParameterException, EmptySearchException {
         if(searchWordDto != null){
             model.addAttribute("searchWordDto", searchWordDto);
@@ -111,6 +117,14 @@ public class SearchPageController {
                     authorService.converterBookListToListWithAuthors(bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 5).getContent(), 0, 5));
             model.addAttribute("searchResultsFullLong",
                     bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 10).getTotalElements());
+            if(token != null){
+
+                model.addAttribute("curUsrStatus","authorized");
+                model.addAttribute("curUsr",userRegister.getCurrentUser());
+            }else {
+                model.addAttribute("curUsrStatus","unauthorized");
+                model.addAttribute("curUsr",null);
+            }
             return "/search/index";
 
         }else {
