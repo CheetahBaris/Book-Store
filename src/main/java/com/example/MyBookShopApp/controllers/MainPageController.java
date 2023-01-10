@@ -111,7 +111,16 @@ public class MainPageController {
     }
 
     @GetMapping("/")
-    public String mainPage(@CookieValue(value = "token", required = false) String token, Model model) {
+    public String mainPage(@CookieValue(value = "cartContents", required = false) String cartContents,@CookieValue(value = "postponedContents", required = false) String postponedContents,@CookieValue(value = "token", required = false) String token, Model model) {
+
+       postponedContents = postponedContents.isEmpty()? null: postponedContents;
+       cartContents = cartContents.isEmpty()? null: cartContents;
+
+        String[]  cookiePostponedSlugs =  postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null ?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
 
         if(token != null){
 
@@ -137,8 +146,18 @@ public class MainPageController {
     @GetMapping("/books/tags")
     public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
                              @RequestParam(value = "limit", required = false) Integer limit,
-                             @CookieValue(value = "token", required = false) String token, Model model) throws BookstoreApiWrongParameterException {
+                             @CookieValue(value = "token", required = false) String token,
+                             @CookieValue(value = "cartContents", required = false) String cartContents,
+                             @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) throws BookstoreApiWrongParameterException {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         model.addAttribute("tagListMap", tagListMap());
+
         model.addAttribute("map", authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
         model.addAttribute("TagName", tag);

@@ -135,7 +135,10 @@ public class BookShopCartController {
     @GetMapping("/cart")
     public String handleCartRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
                                     @CookieValue(value = "token", required = false) String token,
+                                    @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                     Model model) throws BookstoreApiWrongParameterException {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
         if (cartContents == null || cartContents.length()<=1 ) {
             model.addAttribute("isCartEmpty", true);
 
@@ -153,6 +156,7 @@ public class BookShopCartController {
                 sumOld+=b.getPrice() + b.getPrice()*b.getDiscount();
                 sum+=b.getPrice();
             }
+
             model.addAttribute("bookCart", booksFromCookieSlugs);
             model.addAttribute("finalPrice",sum);
             model.addAttribute("finalPriceOld",sumOld);
@@ -167,14 +171,19 @@ public class BookShopCartController {
             model.addAttribute("curUsrStatus","unauthorized");
             model.addAttribute("curUsr",null);
         }
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
 
         return "cart.html";
     }
 
     @PostMapping("/changeBookStatus/cart/remove/{bookid}")
-    public String handleRemoveBookFromCartRequest(@PathVariable("bookid") String slug, @CookieValue(name =
-            "cartContents", required = false) String cartContents, HttpServletResponse response, Model model) {
+    public String handleRemoveBookFromCartRequest(@PathVariable("bookid") String slug,@CookieValue(value = "cartContents", required = false) String cartContents,
+                                                  @CookieValue(value = "postponedContents", required = false) String postponedContents, HttpServletResponse response, Model model) {
+
         if (cartContents != null && !cartContents.equals("")) {
             ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(cartContents.split("/")));
 //            cookieBooks.clear();
@@ -190,6 +199,15 @@ public class BookShopCartController {
         } else {
             model.addAttribute("isCartEmpty", true);
         }
+
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
 
         return "redirect:/books/cart";
     }
@@ -230,7 +248,7 @@ public class BookShopCartController {
                     stringJoiner.add(cartContents).add(s);
                 }
             }else {
-                stringJoiner.add(cartContents).add(slug);
+                stringJoiner.add(slug);
             }
             Cookie cookie = new Cookie("cartContents", stringJoiner.toString());
             cookie.setPath("/");

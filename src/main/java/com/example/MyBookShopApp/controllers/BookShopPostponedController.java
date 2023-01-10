@@ -126,7 +126,8 @@ public class BookShopPostponedController {
     }
 
     @GetMapping("/postponed")
-    public String handlePostponeRequest(@CookieValue(value = "postponedContents", required = false) String postponedContents,
+    public String handlePostponeRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                        @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                         @CookieValue(value = "token", required = false) String token, Model model) throws BookstoreApiWrongParameterException {
 
         if (postponedContents == null || postponedContents.length()<=1) {
@@ -164,6 +165,13 @@ public class BookShopPostponedController {
             model.addAttribute("curUsrStatus","unauthorized");
             model.addAttribute("curUsr",null);
         }
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         return "postponed.html";
     }
 

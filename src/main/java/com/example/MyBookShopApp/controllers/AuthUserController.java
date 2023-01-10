@@ -122,8 +122,15 @@ public class AuthUserController {
 
 
     @GetMapping("/signin")
-    public String handleSignin(Model model) {
+    public String handleSignin(@CookieValue(value = "cartContents", required = false) String cartContents,
+                               @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         return "signin.html";
     }
 
@@ -165,8 +172,15 @@ public class AuthUserController {
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm, Model model) {
+    public String handleUserRegistration(RegistrationForm registrationForm,@CookieValue(value = "cartContents", required = false) String cartContents,
+                                         @CookieValue(value = "postponedContents", required = false) String postponedContents,  Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         userRegister.registerNewUser(registrationForm);
         model.addAttribute("regOk", true);
         return "signin.html";
@@ -232,14 +246,30 @@ public class AuthUserController {
 
 
     @GetMapping("/my")
-    public String handleMy(Model model) {
-        model.addAttribute("curUsr",userRegister.getCurrentUser());
+    public String handleMy(@CookieValue(value = "cartContents", required = false) String cartContents,
+                           @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
+
+        model.addAttribute("curUsr",userRegister.getCurrentUser());
         return "my";
     }
 
     @GetMapping("/profile")
-    public String handleProfile(Model model) {
+    public String handleProfile(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         model.addAttribute("curUsr", userRegister.getCurrentUser());
         return "profile";
     }

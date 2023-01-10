@@ -115,8 +115,16 @@ public class RecentBooksPageController {
                                     @RequestParam(value = "to", required = false) String to,
                                     @RequestParam(value = "offset", required = false) Integer offset,
                                     @RequestParam(value = "limit", required = false) Integer limit,
-                                    @CookieValue(value = "token", required = false) String token,
+                                    @CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
+                                    @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                     Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         if(token != null){
 
             model.addAttribute("curUsrStatus","authorized");

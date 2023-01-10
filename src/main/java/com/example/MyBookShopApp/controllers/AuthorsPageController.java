@@ -119,8 +119,19 @@ public class AuthorsPageController {
 
 
     @GetMapping("/authors")
-    public String authorsPage(@CookieValue(value = "token", required = false) String token, Model model) {
+    public String authorsPage(@CookieValue(value = "token", required = false) String token,
+                              @CookieValue(value = "cartContents", required = false) String cartContents,
+                              @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         if(token != null){
+
 
             model.addAttribute("curUsrStatus","authorized");
             model.addAttribute("curUsr",userRegister.getCurrentUser());
@@ -137,8 +148,15 @@ public class AuthorsPageController {
     @GetMapping("books/authors")
     public String getAuthorsSlug(@RequestParam(value = "author", required = false) String author, @RequestParam("offset") Integer offset,
                                 @RequestParam("limit") Integer limit,
-                                 @CookieValue(value = "token", required = false) String token, Model model) {
+                                 @CookieValue(value = "token", required = false) String token, @CookieValue(value = "cartContents", required = false) String cartContents,
+                                 @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
 
         model.addAttribute("AuthorsBooksList",
                 authorService.getBookEntitiesByAuthorName(author, offset, limit));
@@ -167,8 +185,15 @@ public class AuthorsPageController {
 
     @GetMapping("books/authorEntity")
     public String getAuthorEntitySlug(@RequestParam(value = "author", required = false) String author,
-                                      @CookieValue(value = "token", required = false) String token,Model model) {
+                                      @CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
+                                      @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         model.addAttribute("AuthorsBooksList",
                 authorService.getBookEntitiesByAuthorName(author, 0, 10));
         model.addAttribute("Author", authorService.findAuthorEntitiesByName(author));

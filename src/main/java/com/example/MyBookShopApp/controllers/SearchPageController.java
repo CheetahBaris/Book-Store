@@ -109,9 +109,18 @@ public class SearchPageController {
 
     @GetMapping(value = {"/search", "/search/{searchWord}"})
     public String getSearchResult(@PathVariable(value = "searchWord", required = false) SearchWordDto searchWordDto,
-                                  @CookieValue(value = "token", required = false) String token,
+                                  @CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
+                                  @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                   Model model) throws BookstoreApiWrongParameterException, EmptySearchException {
+        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
+        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
+        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         if(searchWordDto != null){
+
             model.addAttribute("searchWordDto", searchWordDto);
             model.addAttribute("searchResults",
                     authorService.converterBookListToListWithAuthors(bookService.getPageOfSearchResultBooks(searchWordDto.getExample(), 0, 5).getContent(), 0, 5));

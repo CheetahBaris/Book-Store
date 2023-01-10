@@ -37,7 +37,7 @@ public class JWTUtil {
         return createToken(claims, userDetails.getUsername());
     }
 
-    public <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -48,29 +48,24 @@ public class JWTUtil {
 
     }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
 
-        return extractClaim(token,Claims::getSubject);
+        return extractClaim(token, Claims::getSubject);
 
     }
 
-    public Date extractExpiration(String token){
-        return extractClaim(token,Claims::getExpiration);
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
-    public Boolean isTokenExpired(String token){
-
-//        if(extractExpiration(token).equals(null)){
-//            throw new InvalidJwtTokenException("Bad token");
-//        }else {
-
+    public Boolean isTokenExpired(String token) {
         try {
             return extractExpiration(token).before(new Date());
-        }catch (ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
 
             return true;
         }
-      }
+    }
 
 
     public Boolean validateToken(String token, UserDetails userDetails) throws InvalidJwtTokenException {
