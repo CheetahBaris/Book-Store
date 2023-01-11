@@ -124,10 +124,11 @@ public class AuthUserController {
     @GetMapping("/signin")
     public String handleSignin(@CookieValue(value = "cartContents", required = false) String cartContents,
                                @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+//        postponedContents = postponedContents.isEmpty()? null: postponedContents;
+//        cartContents = cartContents.isEmpty()? null: cartContents;
+//        String[]  cookiePostponedSlugs = postponedContents!=null ?  postponedContents.split("/"):null;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
@@ -174,10 +175,10 @@ public class AuthUserController {
     @PostMapping("/reg")
     public String handleUserRegistration(RegistrationForm registrationForm,@CookieValue(value = "cartContents", required = false) String cartContents,
                                          @CookieValue(value = "postponedContents", required = false) String postponedContents,  Model model) {
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
+
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
@@ -209,8 +210,6 @@ public class AuthUserController {
         RegistrationForm registrationForm1 = new RegistrationForm();
         ContactConfirmationPayload payload = new ContactConfirmationPayload();
 
-
-
         String ht = Jsoup.connect("https://oauth.vk.com/access_token?client_id=51518065&client_secret=wi7BtkmkYD8Ga8tN17zP&redirect_uri=http://localhost:8085/oauth2/vk&code=" + code+"&v=5.131&state="+state).ignoreContentType(true).get().text();
 
         object= (JSONObject) parser.parse(ht);
@@ -226,7 +225,7 @@ public class AuthUserController {
         fullName =  object.get("first_name") +" "+  object.get("last_name");
         phone= (String) object.get("home_phone");
 
-         registrationForm1.setEmail(email);
+        registrationForm1.setEmail(email);
         registrationForm1.setName(fullName);
         registrationForm1.setPass("BKontakte");
         registrationForm1.setPhone(phone.isEmpty()?"0":phone);
@@ -244,14 +243,12 @@ public class AuthUserController {
 
     }
 
-
     @GetMapping("/my")
     public String handleMy(@CookieValue(value = "cartContents", required = false) String cartContents,
                            @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
+
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
@@ -263,10 +260,9 @@ public class AuthUserController {
     @GetMapping("/profile")
     public String handleProfile(@CookieValue(value = "cartContents", required = false) String cartContents,
                                 @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
+
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);

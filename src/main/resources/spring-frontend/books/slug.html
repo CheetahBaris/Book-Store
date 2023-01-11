@@ -33,7 +33,7 @@
                         <div class="ProductCard-photo" id="uploadButton">
                             <img th:src="${slugBook.image}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>
                         </div>
-                            <input type="file" name="file" id="dialog" style="display: none" accept="image/*">
+                            <input th:if="${curUsrStatus=='authorized'}" type="file" name="file" id="dialog" style="display: none" accept="image/*">
                         </form>
                     </div>
                     <div class="ProductCard-desc" th:replace="~{fragments/book_description_fragment :: bookDesc}"></div>

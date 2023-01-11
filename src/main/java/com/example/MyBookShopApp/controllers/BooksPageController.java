@@ -155,10 +155,9 @@ public class BooksPageController {
         model.addAttribute("likes", booksRatingAndPopularityService.getAmountOfLikes(slug));
         model.addAttribute("dislikes", booksRatingAndPopularityService.getAmountOfDislikes(slug));
 
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
+
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);

@@ -137,8 +137,7 @@ public class BookShopCartController {
                                     @CookieValue(value = "token", required = false) String token,
                                     @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                     Model model) throws BookstoreApiWrongParameterException {
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
+
         if (cartContents == null || cartContents.length()<=1 ) {
             model.addAttribute("isCartEmpty", true);
 
@@ -171,8 +170,9 @@ public class BookShopCartController {
             model.addAttribute("curUsrStatus","unauthorized");
             model.addAttribute("curUsr",null);
         }
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
+
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
@@ -200,11 +200,9 @@ public class BookShopCartController {
             model.addAttribute("isCartEmpty", true);
         }
 
-        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-        cartContents = cartContents.isEmpty()? null: cartContents;
+        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
+        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
-        String[]  cookiePostponedSlugs = postponedContents!=null ?postponedContents.split("/"):null;
-        String[] cookieCartSlugs = cartContents!=null?cartContents.split("/"):null;
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
