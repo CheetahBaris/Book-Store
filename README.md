@@ -1,5 +1,5 @@
 # Book-Store
-Привет, меня зовут Никита. Вашему вниманию представлен аналог читай-города\литреса в моем исполнении.
+Привет! Меня зовут Никита. Вашему вниманию представлен аналог читай-города\литреса в моем исполнении.
 Стэк технологий мною используемых: Spring-Boot\Security\Data\Test , Asserj, Hamcrest, Mockito, JSONNassert, JsonPath, Selenium, Swagger, REST Api, Jsoup, Liquibase, Json-simple, Hibernate, OAuth2.0, PostgreSql, JUnit, Cookie, JWT token, Themleaf.
 Сайт состоит из:
 1. Главная страницы на которой есть разделы - Рекомендуемое , Новинки и Полпулярное. У каждого раздела свой алгоритм работы. Так же есть облако тэгов, Header и Footer. 
