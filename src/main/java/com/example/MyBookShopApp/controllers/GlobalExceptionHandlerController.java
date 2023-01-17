@@ -33,7 +33,7 @@ public class GlobalExceptionHandlerController {
     public String handleUsernameNotFoundEx(UsernameNotFoundException e, RedirectAttributes redirectAttributes){
         Logger.getLogger(this.getClass().getSimpleName()).warning(e.getLocalizedMessage());
         redirectAttributes.addFlashAttribute("userNameError",e);
-        return "redirect:/";
+        return "redirect:/logout";
     }
     @ExceptionHandler(SigninDataNotFoundException.class)
     public String handleEmailNotFoundEx(SigninDataNotFoundException e, RedirectAttributes redirectAttributes){

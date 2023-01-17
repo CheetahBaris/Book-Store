@@ -8,15 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.awt.print.Book;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface BookRepository extends JpaRepository<BookEntity, Long> {
     @Query("from BookEntity")
-    List<Book> customFindAllBooks();
+    Page<BookEntity> customFindAllBooks( Pageable nextPage);
 
-    //NEW BOOK REST REPOSITORY
+     //NEW BOOK REST REPOSITORY
 
 
     List<BookEntity> findBooksByTitleContaining(String bookTitle);
@@ -33,12 +35,16 @@ public interface BookRepository extends JpaRepository<BookEntity, Long> {
 
     Page<BookEntity> findBookByTitleContaining(String bookTitle, Pageable nextPage);
 
-    Page<BookEntity> findBookByPubDateBetween(Date fromDateRecent, Date endDateRecent, Pageable nextPage);
+    Page<BookEntity> findBookByPubDateBetween(LocalDate fromDateRecent, LocalDate endDateRecent, Pageable nextPage);
+
 
     @Query(value = "SELECT * FROM books ORDER BY relevance DESC ", nativeQuery = true)
     Page<BookEntity> getBookEntityFromRelevance(Pageable nextPage);
+    @Query(value = "SELECT * FROM books ORDER BY relevance DESC ", nativeQuery = true)
+    List<BookEntity> getTopRelevanceList();
 
     Page<BookEntity> findBookEntitiesByTag(String tag, Pageable nextPage);
+    List<BookEntity> findBookEntitiesByTagIn(List<String> tag);
 
     BookEntity findBookEntitiesBySlug(String slug);
     List<BookEntity> findBookEntitiesBySlugIn(List<String> slug);

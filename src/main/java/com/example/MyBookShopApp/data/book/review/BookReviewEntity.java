@@ -31,6 +31,9 @@ public class BookReviewEntity {
 
     @Column(name = "book_rating", columnDefinition = "SMALLINT")
     private int bookRating;
+
+    @Column(name = "review_rating")
+    private int reviewRating;
     @OneToMany(mappedBy = "reviewId")
     private List<BookReviewLikeEntity> bookReviewLikeEntity;
 
@@ -90,4 +93,11 @@ public class BookReviewEntity {
         this.bookReviewLikeEntity = bookReviewLikeEntity;
     }
 
+    public int getReviewRating() {
+        return reviewRating;
+    }
+
+    public void setReviewRating(int reviewRating) {
+        this.reviewRating = reviewRating;
+    }
 }

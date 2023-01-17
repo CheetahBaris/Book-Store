@@ -13,4 +13,8 @@ public interface BookToAuthorRepository extends JpaRepository<Book2AuthorEntity,
 
     List<Book2AuthorEntity> findBook2AuthorEntitiesByAuthorId(AuthorEntity author);
     List<Book2AuthorEntity> findBook2AuthorEntitiesByBookId(BookEntity book);
+    List<Book2AuthorEntity> findBook2AuthorEntitiesByBookIdIn(List<BookEntity> books);
+    List<Book2AuthorEntity> findBook2AuthorEntitiesByAuthorIdIn(List<AuthorEntity> authors);
+
+
 }

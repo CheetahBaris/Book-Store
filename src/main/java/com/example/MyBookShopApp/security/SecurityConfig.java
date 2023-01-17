@@ -31,7 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final BookstoreUserDetailsService bookstoreUserDetailsService;
     private final JWTRequestFilter filter;
-    private String code = "";
 
     @Autowired
     public SecurityConfig(BookstoreUserDetailsService bookstoreUserDetailsService, JWTRequestFilter filter) {
@@ -79,16 +78,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new LogoutHandler() {
             @Override
             public void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) {
-                Cookie[] cookies =httpServletRequest.getCookies();
-                for(Cookie c: cookies){
-                    if(c.getName().equals("token")){
-                         filter.setBlackList(c.getValue());
+
+                if(httpServletRequest.getCookies()!=null) {
+
+                    Cookie[] cookies = httpServletRequest.getCookies();
+
+                    for (Cookie c : cookies) {
+                        if (c.getName().equals("token")) {
+                            filter.setBlackList(c.getValue());
+                        }
                     }
-                }
-                try {
-                    httpServletRequest.logout();
-                } catch (ServletException e) {
-                    throw new RuntimeException(e);
+                    try {
+                        httpServletRequest.logout();
+                    } catch (ServletException e) {
+                        throw new RuntimeException(e);
+                    }
+                }else {
+                    try {
+                        httpServletRequest.logout();
+                    } catch (ServletException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         };

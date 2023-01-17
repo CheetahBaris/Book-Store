@@ -4,13 +4,16 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.format.datetime.joda.LocalDateParser;
+import org.springframework.format.datetime.joda.LocalDateTimeParser;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +22,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -71,15 +76,7 @@ public class RecentBooksPageController {
         return bigList.size();
     }
 
-    @ModelAttribute("booksList")
-    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 10).getContent();
-    }
 
-    @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
-    }
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
@@ -104,9 +101,9 @@ public class RecentBooksPageController {
 
     @ModelAttribute("recentBooks")
     public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse("2002-05-21");
-        Date endDateRecent = format.parse(LocalDate.now().toString());
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
@@ -142,7 +139,7 @@ public class RecentBooksPageController {
                                       @RequestParam(value = "to", required = false) String to,
                                       @RequestParam(value = "offset", required = false) Integer offset,
                                       @RequestParam(value = "limit", required = false) Integer limit)
-            throws ParseException, BookstoreApiWrongParameterException {
+            throws  BookstoreApiWrongParameterException {
 
         String[] fromArr = from.split("\\.");
         String[] toArr = to.split("\\.");
@@ -162,9 +159,22 @@ public class RecentBooksPageController {
             }
         }
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse(newFrom);
-        Date endDateRecent = format.parse(newTo);
+
+        LocalDate endDateRecent = LocalDate.parse(LocalDate.parse(newTo).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse(newFrom).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        return new BooksPageDto(authorService.converterBookListToListWithAuthors(
+                bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, offset + 1, limit).getContent(), offset + 1, limit));
+    }
+    @GetMapping("/books/page/recentForSlider")
+    @ResponseBody
+    public BooksPageDto getRecentForSliderPage(@RequestParam(value = "offset", required = false) Integer offset,
+                                      @RequestParam(value = "limit", required = false) Integer limit)
+            throws  BookstoreApiWrongParameterException {
+
+
+        LocalDate endDateRecent = LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse( "2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         return new BooksPageDto(authorService.converterBookListToListWithAuthors(
                 bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, offset + 1, limit).getContent(), offset + 1, limit));

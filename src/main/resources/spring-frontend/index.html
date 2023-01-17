@@ -23,9 +23,9 @@
     <div class="wrap">
         <main class="Middle-main">
             <div class="Section">
-                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title=#{index.recommend})}"></div>
-                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title=#{index.recent})}"></div>
-                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title=#{index.popular})}"></div>
+                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title='recommended')}"></div>
+                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title='recent')}"></div>
+                <div th:replace="~{fragments/book_slider_fragment :: bookSlider(title='popular')}"></div>
             </div>
             <h2 class="Middle-title" th:text="#{index.cloud}">Книги по тегам
             </h2>

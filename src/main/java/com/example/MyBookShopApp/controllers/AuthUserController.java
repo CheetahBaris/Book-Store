@@ -4,19 +4,17 @@ import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.errs.SigninDataNotFoundException;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
-import com.example.MyBookShopApp.security.ContactConfirmationPayload;
-import com.example.MyBookShopApp.security.ContactConfirmationResponse;
-import com.example.MyBookShopApp.security.RegistrationForm;
+import com.example.MyBookShopApp.services.BookstoreUserRegister;
+import com.example.MyBookShopApp.data.dto.ContactConfirmationPayload;
+import com.example.MyBookShopApp.data.dto.ContactConfirmationResponse;
+import com.example.MyBookShopApp.data.dto.RegistrationForm;
 import com.example.MyBookShopApp.services.*;
+import com.google.errorprone.annotations.FormatMethod;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +28,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -82,15 +81,7 @@ public class AuthUserController {
         return bigList.size();
     }
 
-    @ModelAttribute("booksList")
-    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 10).getContent();
-    }
 
-    @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
-    }
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
@@ -114,9 +105,9 @@ public class AuthUserController {
 
     @ModelAttribute("recentBooks")
     public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse("2002-05-21");
-        Date endDateRecent = format.parse(LocalDate.now().toString());
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
@@ -124,9 +115,7 @@ public class AuthUserController {
     @GetMapping("/signin")
     public String handleSignin(@CookieValue(value = "cartContents", required = false) String cartContents,
                                @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-//        postponedContents = postponedContents.isEmpty()? null: postponedContents;
-//        cartContents = cartContents.isEmpty()? null: cartContents;
-//        String[]  cookiePostponedSlugs = postponedContents!=null ?  postponedContents.split("/"):null;
+
         String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
         String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
@@ -143,24 +132,32 @@ public class AuthUserController {
 
     @PostMapping("/requestContactConfirmation")
     @ResponseBody
-    public ContactConfirmationResponse handleRequestContactConfirmation(
+    public ContactConfirmationResponse handleRequestContactConfirmation(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse,
             @RequestBody ContactConfirmationPayload contactConfirmationPayload) throws SigninDataNotFoundException {
 
-        if (bookstoreUserDetailsService.getUserByEmail(contactConfirmationPayload.getContact()) != null
-                || bookstoreUserDetailsService.getUserByPhone(contactConfirmationPayload.getContact()) != null) {
-
+        if (httpServletRequest.getHeader("Referer").equals("http://localhost:8085/signup")) {
             ContactConfirmationResponse response = new ContactConfirmationResponse();
             response.setResult("true");
             return response;
 
-        } else {
-            if (contactConfirmationPayload.getContact().startsWith("+")) {
-                throw new SigninDataNotFoundException("phone not found");
+         }else {
+
+            if (bookstoreUserDetailsService.getUserByEmail(contactConfirmationPayload.getContact()) != null
+                    || bookstoreUserDetailsService.getUserByPhone(contactConfirmationPayload.getContact()) != null) {
+
+                ContactConfirmationResponse response = new ContactConfirmationResponse();
+                response.setResult("true");
+                return response;
 
             } else {
-                throw new SigninDataNotFoundException("email not found");
-            }
+                if (contactConfirmationPayload.getContact().startsWith("+")) {
+                    throw new SigninDataNotFoundException("phone not found");
 
+                } else {
+                    throw new SigninDataNotFoundException("email not found");
+                }
+
+            }
         }
     }
 
@@ -173,8 +170,8 @@ public class AuthUserController {
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm,@CookieValue(value = "cartContents", required = false) String cartContents,
-                                         @CookieValue(value = "postponedContents", required = false) String postponedContents,  Model model) {
+    public String handleUserRegistration(RegistrationForm registrationForm , @CookieValue(value = "cartContents", required = false) String cartContents,
+                                         @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
 
         String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
         String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
@@ -198,7 +195,11 @@ public class AuthUserController {
     }
 
     @GetMapping("/oauth2/vk")
-    public void vkHandle(@RequestParam(value = "code", required = false) String code,@RequestParam(value = "state", required = false) String state, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException {
+    public void vkHandle(@RequestParam(value = "code", required = false) String code,
+                         @RequestParam(value = "state", required = false) String state,
+                         HttpServletRequest httpServletRequest,
+                         HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException {
+
         String accessToken;
         Long userId1;
         String email;
@@ -240,29 +241,28 @@ public class AuthUserController {
         cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
         httpServletResponse.sendRedirect("http://localhost:8085/my");
-
     }
 
     @GetMapping("/my")
     public String handleMy(@CookieValue(value = "cartContents", required = false) String cartContents,
                            @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+
         String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
         String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
-
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-
         model.addAttribute("curUsr",userRegister.getCurrentUser());
+
         return "my";
     }
 
     @GetMapping("/profile")
     public String handleProfile(@CookieValue(value = "cartContents", required = false) String cartContents,
                                 @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+
         String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
         String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
 
         model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
         model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);

@@ -39,7 +39,7 @@
                                  #strings.substringBefore(book.authorsNames,',') : book.authorsNames})}"
                                                                   th:text="${book.authorsNames}">Борис Васильевич Бедный</a>
                                 </div>
-                                <div class="Cart-title"><a href="#" th:text="${book.title}">Жизнь</a>
+                                <div class="Cart-title"><a th:href="@{'/books/'+${book.slug}}" href="#" th:text="${book.title}">Жизнь</a>
                                 </div>
                                 <div class="Cart-rating"><span class="Rating"><span class="Rating-stars"><span
                                         class="Rating-star Rating-star_view">

@@ -4,7 +4,7 @@
     <div class="Card" th:each="book : ${category== 'tag' ? map:
      (category== 'genre' ? GenresList :
       (category== 'author' ? AuthorsBooksList :
-       (category=='search' ?searchResults : booksList)))}">
+       (category=='search' ?searchResults : popularBooks)))}">
         <div class="Card-picture">
             <a href="#" th:href="@{'/books/' + ${book.slug}}" th:id="${book.id}">
                 <img th:src="${book.image}" src="/assets/img/content/main/card.jpg" alt="card.jpg"/>

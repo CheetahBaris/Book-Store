@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,7 @@ public class BookEntity {
     private Long id;
     @Column(name = "pub_date")
     @ApiModelProperty("date of book publication")
-    private Date pubDate;
+    private LocalDate pubDate;
      @Column(name = "is_bestseller",columnDefinition = "SMALLINT")
     @ApiModelProperty("if isBestseller = 1 so the book is considered to be bestseller and if 0 the book is not a " +
             "bestseller")
@@ -72,11 +73,11 @@ public class BookEntity {
         this.id = id;
     }
 
-    public Date getPubDate() {
+    public LocalDate getPubDate() {
         return pubDate;
     }
 
-    public void setPubDate(Date pubDate) {
+    public void setPubDate(LocalDate pubDate) {
         this.pubDate = pubDate;
     }
 

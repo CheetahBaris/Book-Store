@@ -4,7 +4,7 @@ import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
@@ -22,6 +22,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -77,15 +78,7 @@ public class BookShopPostponedController {
         return bigList.size();
     }
 
-    @ModelAttribute("booksList")
-    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 10).getContent();
-    }
 
-    @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
-    }
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
@@ -109,9 +102,9 @@ public class BookShopPostponedController {
 
     @ModelAttribute("recentBooks")
     public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse("2002-05-21");
-        Date endDateRecent = format.parse(LocalDate.now().toString());
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 

@@ -2,18 +2,15 @@ package com.example.MyBookShopApp.controllers;
 
 import com.example.MyBookShopApp.data.ResourceStorage;
 import com.example.MyBookShopApp.data.book.BookEntity;
-import com.example.MyBookShopApp.data.dto.ChangeBookStarsDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
-import com.example.MyBookShopApp.security.BookstoreUserRegister;
+import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
 import com.example.MyBookShopApp.services.BookService;
 import com.example.MyBookShopApp.services.BooksRatingAndPopularityService;
 import com.example.MyBookShopApp.services.GenreService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import liquibase.pro.packaged.S;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +18,20 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.authentication.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.websocket.server.PathParam;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -91,15 +86,9 @@ public class BooksPageController {
         return bigList.size();
     }
 
-    @ModelAttribute("booksList")
-    public List<BookEntity> bookList() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 10).getContent();
-    }
 
-    @ModelAttribute("recommendedBooks")
-    public List<BookEntity> recommendedBooks() throws BookstoreApiWrongParameterException {
-        return bookService.getPageOfRecommendedBooks(0, 6).getContent();
-    }
+
+
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
@@ -124,9 +113,9 @@ public class BooksPageController {
 
     @ModelAttribute("recentBooks")
     public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        Date fromDateRecent = format.parse("2002-05-21");
-        Date endDateRecent = format.parse(LocalDate.now().toString());
+        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
         return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
     }
 
@@ -150,7 +139,7 @@ public class BooksPageController {
         model.addAttribute("threeStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,3));
         model.addAttribute("twoStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,2));
         model.addAttribute("oneStareRate", booksRatingAndPopularityService.getStarsRateSize(slug,1));
-        model.addAttribute("feedBacks",booksRatingAndPopularityService.getFeedBackFromUserBySlug(slug));
+        model.addAttribute("feedBacks",booksRatingAndPopularityService.getFeedbackFromUserBySlug(slug));
 
         model.addAttribute("likes", booksRatingAndPopularityService.getAmountOfLikes(slug));
         model.addAttribute("dislikes", booksRatingAndPopularityService.getAmountOfDislikes(slug));

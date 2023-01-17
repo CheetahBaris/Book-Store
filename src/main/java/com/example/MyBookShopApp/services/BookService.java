@@ -1,16 +1,20 @@
 package com.example.MyBookShopApp.services;
 
+import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
+import com.example.MyBookShopApp.data.book.links.Book2AuthorEntity;
+import com.example.MyBookShopApp.data.book.links.Book2GenreEntity;
+import com.example.MyBookShopApp.data.genre.GenreEntity;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
-import com.example.MyBookShopApp.repositories.BookRepository;
-import liquibase.pro.packaged.L;
-import liquibase.pro.packaged.S;
+import com.example.MyBookShopApp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,16 +23,28 @@ public class BookService {
     private static final double CART_PERCENT = 0.7;
     private static final double KEPT_PERCENT = 0.4;
     private final BookRepository bookRepository;
+    private  final BookToAuthorRepository bookToAuthorRepository;
+    private final BookToGenreRepository bookToGenreRepository;
+
+    private final AuthorEntityRepository authorEntityRepository;
+    private final GenresRepository genresRepository;
 
     @Autowired
-    public BookService(BookRepository bookRepository) {
+    public BookService(BookRepository bookRepository,
+                       BookToAuthorRepository bookToAuthorRepository,
+                       BookToGenreRepository bookToGenreRepository, AuthorEntityRepository authorEntityRepository, GenresRepository genresRepository) {
         this.bookRepository = bookRepository;
+        this.bookToAuthorRepository = bookToAuthorRepository;
 
+        this.bookToGenreRepository = bookToGenreRepository;
+        this.authorEntityRepository = authorEntityRepository;
+        this.genresRepository = genresRepository;
     }
 
     public List<BookEntity> getBooksData() {
         return bookRepository.findAll();
     }
+
 
 
 //    public List<BookEntity> getBooksByAuthor(String authorName){
@@ -95,17 +111,89 @@ public class BookService {
          }
     }
 
-    public Page<BookEntity> getPageOfRecommendedBooks(Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
-        Pageable nextPage = PageRequest.of(offset, limit);
-         Page<BookEntity> data= bookRepository.findAll(nextPage);
-            if (data.getContent().size() > 0) {
+    public List<BookEntity> getPageOfRecommendedBooks(String[] postponed, String[] cart,
+                                                      Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
 
-                return data;
-            } else {
-
-                throw new BookstoreApiWrongParameterException("No data found with specified parameters");
-            }
+        Set<BookEntity> allBooksFromUser = new HashSet<>();
+        Set<String> tagsFromUserBooks = new HashSet<>();
+        if(postponed != null){
+            allBooksFromUser.addAll(bookRepository.findBookEntitiesBySlugIn(List.of(postponed)));
         }
+        if(cart !=null){
+            allBooksFromUser.addAll(bookRepository.findBookEntitiesBySlugIn(List.of(cart)));
+        }
+
+
+        if(allBooksFromUser.isEmpty()){
+
+            PagedListHolder<BookEntity> bookEntityPagedListHolder = new PagedListHolder<>(
+                    new ArrayList<>(bookRepository.getTopRelevanceList()));
+            bookEntityPagedListHolder.setPage(offset);
+            bookEntityPagedListHolder.setPageSize(limit);
+            return bookEntityPagedListHolder.getPageList();
+
+        }else {
+
+            for (BookEntity book : allBooksFromUser) {
+                tagsFromUserBooks.add(book.getTag());
+            }
+
+            List<Book2AuthorEntity> bookToAuthorEntitiesList = bookToAuthorRepository.
+                    findBook2AuthorEntitiesByBookIdIn(new ArrayList<>(allBooksFromUser));
+
+            List<Book2GenreEntity> bookToGenreEntitiesList = bookToGenreRepository.
+                    findBook2GenreEntitiesByBookIdIn(new ArrayList<>(allBooksFromUser));
+
+            List<GenreEntity> genreEntities = new ArrayList<>();
+            List<AuthorEntity> authorEntities = new ArrayList<>();
+
+
+            for (Book2GenreEntity bookToGenre : bookToGenreEntitiesList) {
+                genreEntities.add(bookToGenre.getGenreId());
+            }
+            for (Book2AuthorEntity book2Author : bookToAuthorEntitiesList) {
+                authorEntities.add(book2Author.getAuthorId());
+            }
+
+            bookToGenreEntitiesList = bookToGenreRepository.findBook2GenreEntitiesByGenreIdIn(genreEntities);
+            bookToAuthorEntitiesList = bookToAuthorRepository.findBook2AuthorEntitiesByAuthorIdIn(authorEntities);
+
+
+
+            //Author & Genre Books
+            for (Book2GenreEntity bookToGenre : bookToGenreEntitiesList) {
+                for (Book2AuthorEntity book2Author : bookToAuthorEntitiesList) {
+                     if(bookToGenre.getBookId().equals(book2Author.getBookId())){
+
+                        allBooksFromUser.add(book2Author.getBookId());
+                    }
+                }
+            }
+
+            //Author & tag Books
+                 for (String tag : tagsFromUserBooks) {
+                     for (Book2AuthorEntity book2Author : bookToAuthorEntitiesList) {
+
+                         if(book2Author.getBookId().getTag().equals(tag)){
+                        allBooksFromUser.add(book2Author.getBookId());
+                    }
+                }
+            }
+
+            PagedListHolder<BookEntity> bookEntityPagedListHolder = new PagedListHolder<>();
+            bookEntityPagedListHolder.setPage(offset);
+            bookEntityPagedListHolder.setPageSize(limit);
+
+            if (allBooksFromUser.size() >= 6) {
+                bookEntityPagedListHolder.setSource(new ArrayList<>(allBooksFromUser));
+
+            } else {
+                bookEntityPagedListHolder.setSource(new ArrayList<>(bookRepository.getTopRelevanceList()));
+            }
+
+            return bookEntityPagedListHolder.getPageList();
+        }
+    }
 
 
     public Page<BookEntity> getPageOfSearchResultBooks(String searchWord, Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
@@ -127,9 +215,9 @@ public class BookService {
 
     }
 
-    public Page<BookEntity> findBookByPubDateBetween(Date fromDateRecent, Date endDateRecent,
+    public Page<BookEntity> findBookByPubDateBetween(LocalDate fromDateRecent, LocalDate endDateRecent,
                                                      Integer offset, Integer limit) throws BookstoreApiWrongParameterException {
-        if (fromDateRecent.after(endDateRecent)) {
+        if (fromDateRecent.isAfter(endDateRecent)) {
 
             throw new BookstoreApiWrongParameterException("Wrong values passed to one or more parameters");
         } else {

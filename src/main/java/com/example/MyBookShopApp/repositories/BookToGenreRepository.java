@@ -13,4 +13,7 @@ public interface BookToGenreRepository extends JpaRepository<Book2GenreEntity, L
 
     List<Book2GenreEntity> findBook2GenreEntitiesByBookId(BookEntity book);
     List<Book2GenreEntity> findBook2GenreEntitiesByGenreId(GenreEntity genre);
+    List<Book2GenreEntity> findBook2GenreEntitiesByBookIdIn(List<BookEntity> books);
+    List<Book2GenreEntity> findBook2GenreEntitiesByGenreIdIn(List<GenreEntity> genres);
+
 }

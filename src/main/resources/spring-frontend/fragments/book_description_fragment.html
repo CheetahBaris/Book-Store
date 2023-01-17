@@ -96,9 +96,10 @@
                         </svg></span>
                       <input name="rating" type="radio" value="5"/></span></span>
         </div>
-        <div class="ProductCard-tags"><span class="ProductCard-titleProp">Тэги:</span><a
-                href="/tags/">Современные</a>,&#32;<a href="/tags/">Психологическая проза</a>
-        </div>
+        <div class="ProductCard-tags">
+            <span class="ProductCard-titleProp">Тэги:</span>
+            <a th:href="@{/books/tags(tag=${slugBook.tag}, offset=0, limit=10)}" href="/tags/" th:text="${slugBook.tag}">Современные</a>
+         </div>
         <div class="ProductCard-cost"><span class="ProductCard-titleProp">Цена:</span><span
                 class="ProductCard-priceOld" th:text="${'₽'+#numbers.formatDecimal(slugBook.getPrice() + slugBook.getPrice()*slugBook.getDiscount(),2,0)} ">₽300</span><span class="ProductCard-price" th:text="'₽'+${slugBook.getPrice()}">₽180</span>
         </div>
