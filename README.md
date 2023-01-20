@@ -1,6 +1,6 @@
 # Book-Store/Книжный магазин
 Привет! Меня зовут Никита. Вашему вниманию представлен аналог читай-города\литреса в моем исполнении.
-Стэк технологий, используемых мною: Spring-Boot\Security\Data\Test , Asserj, Hamcrest, Mockito, JSONNassert, JsonPath, Selenium, Swagger, REST Api, Jsoup, Liquibase, Json-simple, Hibernate, OAuth2.0, PostgreSql, JUnit, Cookie, JWT token, Themleaf.
+Стэк технологий, используемых мною: Spring-Boot\Security\Data\Test, AOP, Asserj, Hamcrest, Mockito, JSONNassert, JsonPath, Selenium, Swagger, REST Api, Jsoup, Liquibase, Json-simple, Hibernate, OAuth2.0, PostgreSql, JUnit, Cookie, JWT token, Themleaf.
 Сайт состоит из:
 1. Главная страница, на которой есть разделы: Рекомендуемое, Новинки и Популярное. У каждого раздела свой алгоритм работы. Так же есть облако тэгов, Header и Footer.
 В облаке тэгов реализована функция динамического изменения шрифта. Размер шрифта каждого элемента зависит от кол-ва книг в нем(есть соответсвующий индикатор).  
