@@ -4,6 +4,7 @@ import com.example.MyBookShopApp.data.author.AuthorEntity;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.errs.InvalidJwtTokenException;
 import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
@@ -71,7 +72,7 @@ public class BookShopCartController {
     public String handleCartRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
                                     @CookieValue(value = "postponedContents", required = false) String postponedContents,
                                     @CookieValue(value = "token", required = false) String token,
-                                    Model model) throws BookstoreApiWrongParameterException {
+                                    Model model) throws BookstoreApiWrongParameterException, InvalidJwtTokenException {
 
         if (cartContents == null || cartContents.length()<=1 ) {
             model.addAttribute("isCartEmpty", true);

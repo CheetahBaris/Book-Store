@@ -5,6 +5,7 @@ import com.example.MyBookShopApp.data.ResourceStorage;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.errs.InvalidJwtTokenException;
 import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
 import com.example.MyBookShopApp.services.AuthorService;
@@ -96,7 +97,7 @@ public class BooksPageController {
     }
     @PostMapping("/changeBookStatus")
     public String bookGradingFunction(HttpServletRequest httpServletRequest,
-                                      HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException {
+                                      HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException, InvalidJwtTokenException {
 
         JSONObject data = new JSONObject();
         JSONParser parser = new JSONParser();
@@ -122,7 +123,7 @@ public class BooksPageController {
     public String rateBookReviewFunction(HttpServletRequest httpServletRequest,
                                          HttpServletResponse httpServletResponse,
                                          Model model)
-            throws IOException, org.json.simple.parser.ParseException {
+            throws IOException, org.json.simple.parser.ParseException, InvalidJwtTokenException {
 
         JSONObject data = new JSONObject();
         JSONParser parser = new JSONParser();
@@ -141,7 +142,7 @@ public class BooksPageController {
     }
     @PostMapping("/bookReview")
     public String textBookReviewFunction(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse )
-            throws IOException, org.json.simple.parser.ParseException {
+            throws IOException, org.json.simple.parser.ParseException, InvalidJwtTokenException {
 
         JSONObject data = new JSONObject();
         JSONParser parser = new JSONParser();

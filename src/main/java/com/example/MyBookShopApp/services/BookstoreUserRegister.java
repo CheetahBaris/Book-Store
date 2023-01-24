@@ -1,6 +1,7 @@
 package com.example.MyBookShopApp.services;
 
 import com.example.MyBookShopApp.data.user.UserEntity;
+import com.example.MyBookShopApp.errs.InvalidJwtTokenException;
 import com.example.MyBookShopApp.repositories.UserRepository;
 import com.example.MyBookShopApp.security.BookstoreUserDetails;
 import com.example.MyBookShopApp.data.dto.ContactConfirmationPayload;
@@ -54,7 +55,7 @@ public class BookstoreUserRegister {
 
             userRepository.save(user);
             return user;
-        }else {
+        } else {
             return null;
         }
     }
@@ -71,11 +72,18 @@ public class BookstoreUserRegister {
         return response;
     }
 
-    public ContactConfirmationResponse jwtLogin(ContactConfirmationPayload payload) {
+    //TODO: если повториться ошибка аутентификации с просроченным токеном , посмотреть здесь!
+    public ContactConfirmationResponse jwtLogin(ContactConfirmationPayload payload) throws InvalidJwtTokenException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(payload.getContact(),
                 payload.getCode()));
-        BookstoreUserDetails userDetails =
-                (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
+        BookstoreUserDetails userDetails = null;
+        try {
+
+            userDetails =
+                    (BookstoreUserDetails) bookstoreUserDetailsService.loadUserByUsername(payload.getContact());
+        } catch (Exception e) {
+            throw new InvalidJwtTokenException("token invalid!");
+        }
 
         String jwtToken = jwtUtil.generateToken(userDetails);
         ContactConfirmationResponse response = new ContactConfirmationResponse();
@@ -83,15 +91,21 @@ public class BookstoreUserRegister {
         return response;
     }
 
+    //TODO: если повториться ошибка аутентификации с просроченным токеном , посмотреть здесь!
 
-    public UserEntity getCurrentUser() {
-        if( SecurityContextHolder.getContext() !=null){
+    public UserEntity getCurrentUser() throws InvalidJwtTokenException {
+        if (SecurityContextHolder.getContext() != null) {
 
-            BookstoreUserDetails userDetails =
-                    (BookstoreUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            try {
 
-            return  userDetails.getBookstoreUser();
-        }else {
+                BookstoreUserDetails userDetails =
+                        (BookstoreUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                return userDetails.getBookstoreUser();
+            } catch (Exception e) {
+                throw new InvalidJwtTokenException("invalid token!");
+            }
+
+        } else {
             return null;
         }
     }

@@ -4,6 +4,7 @@ import com.example.MyBookShopApp.data.dto.ContactConfirmationPayload;
 import com.example.MyBookShopApp.data.dto.ContactConfirmationResponse;
 import com.example.MyBookShopApp.data.dto.RegistrationForm;
 import com.example.MyBookShopApp.data.user.UserEntity;
+import com.example.MyBookShopApp.errs.InvalidJwtTokenException;
 import com.example.MyBookShopApp.repositories.BookRepository;
 import com.example.MyBookShopApp.repositories.UserRepository;
 import com.example.MyBookShopApp.services.BookstoreUserRegister;
@@ -77,7 +78,7 @@ class BookstoreUserRegisterTests {
         assertSame("true", userRegister.login(payload).getResult());
     }
     @Test
-    void loginJWTTest(){
+    void loginJWTTest()   throws InvalidJwtTokenException {
         UserEntity user = userRegister.registerNewUser(registrationForm);
         ContactConfirmationPayload payload = new ContactConfirmationPayload();
         payload.setContact(user.getEmail());

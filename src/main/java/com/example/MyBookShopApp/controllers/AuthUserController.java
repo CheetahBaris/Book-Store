@@ -4,6 +4,7 @@ import com.example.MyBookShopApp.annotations.CookieSearcher;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
+import com.example.MyBookShopApp.errs.InvalidJwtTokenException;
 import com.example.MyBookShopApp.errs.SigninDataNotFoundException;
 import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.data.dto.ContactConfirmationPayload;
@@ -138,7 +139,7 @@ public class AuthUserController {
     @PostMapping("/login")
     @ResponseBody
     public ContactConfirmationResponse handleLogin(@RequestBody ContactConfirmationPayload payload,
-                                                   HttpServletResponse httpServletResponse) {
+                                                   HttpServletResponse httpServletResponse) throws InvalidJwtTokenException {
         ContactConfirmationResponse loginResponse = userRegister.jwtLogin(payload);
         Cookie cookie = new Cookie("token", loginResponse.getResult());
         httpServletResponse.addCookie(cookie);
@@ -149,7 +150,7 @@ public class AuthUserController {
     public void vkHandle(@RequestParam(value = "code", required = false) String code,
                          @RequestParam(value = "state", required = false) String state,
                          HttpServletRequest httpServletRequest,
-                         HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException {
+                         HttpServletResponse httpServletResponse) throws IOException, org.json.simple.parser.ParseException , InvalidJwtTokenException {
 
         String accessToken;
         Long userId1;
