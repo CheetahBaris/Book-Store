@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.annotations.CookieSearcher;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
 import com.example.MyBookShopApp.services.BookstoreUserRegister;
 import com.example.MyBookShopApp.security.jwt.JWTUtil;
@@ -16,9 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
+import java.beans.BeanProperty;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -47,85 +47,24 @@ public class MainPageController {
         this.jwtUtil = jwtUtil;
     }
 
-    @ModelAttribute("booksListFull")
-    public List<BookEntity> bookListFull() {
-        return bookService.getBooksData();
-    }
-
-    @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
-
-        return bookService.getTagListMap();
-    }
-
-    @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .max(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-    @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .min(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-
-
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
         return new SearchWordDto();
     }
 
-    @ModelAttribute("searchResults")
-    public List<BookEntity> searchResults() {
-        return new ArrayList<>();
-    }
 
-    @ModelAttribute("searchResultsFull")
-    public List<BookEntity> searchResultsFull() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("popularBooks")
-    public List<BookEntity> popularAttrList() {
-        return authorService.converterBookListToListWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
-    }
     @GetMapping("/")
-    public String mainPage(@CookieValue(value = "cartContents", required = false) String cartContents,@CookieValue(value = "postponedContents", required = false) String postponedContents,@CookieValue(value = "token", required = false) String token, Model model) throws BookstoreApiWrongParameterException {
+    @CookieSearcher
+    public String mainPage(@CookieValue(value = "cartContents", required = false) String cartContents,
+                           @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                           @CookieValue(value = "token", required = false) String token, Model model ) throws BookstoreApiWrongParameterException {
 
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
-        model.addAttribute("recommendedBooks",bookService.getPageOfRecommendedBooks(cookiePostponedSlugs,cookieCartSlugs,0, 6));
         model.addAttribute("popularBooks",booksRatingAndPopularityService.getBookByRelevanceDesc( 0, 6));
         model.addAttribute("recentBooks",bookService.findBookByPubDateBetween(LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))),LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))),0, 6));
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-
-
-        if(token != null){
-
-            model.addAttribute("curUsrStatus","authorized");
-            model.addAttribute("curUsr",userRegister.getCurrentUser());
-
-        }else {
-
-            model.addAttribute("curUsrStatus","unauthorized");
-            model.addAttribute("curUsr",null);
-
-        }
+        model.addAttribute("tagListMapXsSize", bookService.getTagListMap().values().stream().min(Comparator.comparing(List::size)).get().size());
+        model.addAttribute("tagListMapLgSize", bookService.getTagListMap().values().stream().max(Comparator.comparing(List::size)).get().size());
+        model.addAttribute("tagListMap",bookService.getTagListMap());
 
         return "index";
 
@@ -145,39 +84,24 @@ public class MainPageController {
     }
 
     @GetMapping("/books/tags")
-    public String getBookTag(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
-                             @RequestParam(value = "limit", required = false) Integer limit,
-                             @CookieValue(value = "token", required = false) String token,
-                             @CookieValue(value = "cartContents", required = false) String cartContents,
-                             @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) throws BookstoreApiWrongParameterException {
+    @CookieSearcher
+    public String getBookTag( @CookieValue(value = "cartContents", required = false) String cartContents,
+                              @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                              @CookieValue(value = "token", required = false) String token,
+                              @RequestParam(value = "tag") String tag,
+                              Model model) throws BookstoreApiWrongParameterException {
 
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-        model.addAttribute("tagListMap", tagListMap());
-
+        model.addAttribute("tagListMap", bookService.getTagListMap());
         model.addAttribute("map", authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, 0, 10).getContent(), 0, 10));
         model.addAttribute("TagName", tag);
-        if(token != null){
-
-            model.addAttribute("curUsrStatus","authorized");
-            model.addAttribute("curUsr",userRegister.getCurrentUser());
-        }else {
-            model.addAttribute("curUsrStatus","unauthorized");
-            model.addAttribute("curUsr",null);
-        }
-        return "/tags/index.html";
+          return "/tags/index.html";
     }
 
     @GetMapping("/books/page/tags")
     @ResponseBody
     public BooksPageDto getBookTagPage(@RequestParam(value = "tag") String tag, @RequestParam(value = "offset", required = false) Integer offset,
                                        @RequestParam(value = "limit", required = false) Integer limit) throws BookstoreApiWrongParameterException {
-
 
         return new BooksPageDto(authorService.converterBookListToListWithAuthors(
                 bookService.findBookEntitiesByTagPage(tag, offset + 1, limit).getContent(), offset + 1, limit));
@@ -187,23 +111,35 @@ public class MainPageController {
 
 
     @GetMapping("/documents")
-    public String getDocuments() {
+    @CookieSearcher
+    public String getDocuments(@CookieValue(value = "cartContents", required = false) String cartContents,
+                               @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                               @CookieValue(value = "token", required = false) String token,Model model) {
         return "/documents/index.html";
     }
 
 
     @GetMapping("/about")
-    public String getAboutPage() {
+    @CookieSearcher
+    public String getAboutPage(@CookieValue(value = "cartContents", required = false) String cartContents,
+                               @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                               @CookieValue(value = "token", required = false) String token,Model model) {
         return "/about.html";
     }
 
     @GetMapping("/faq")
-    public String getFAQPage() {
+    @CookieSearcher
+    public String getFAQPage(@CookieValue(value = "cartContents", required = false) String cartContents,
+                             @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                             @CookieValue(value = "token", required = false) String token,Model model) {
         return "faq.html";
     }
 
     @GetMapping("/contacts")
-    public String getContactsPage() {
+    @CookieSearcher
+    public String getContactsPage(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                  @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                                  @CookieValue(value = "token", required = false) String token,Model model) {
         return "contacts.html";
     }
 

@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.annotations.CookieSearcher;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
 import com.example.MyBookShopApp.errs.BookstoreApiWrongParameterException;
@@ -56,31 +57,6 @@ public class AuthUserController {
         this.bookstoreUserDetailsService = bookstoreUserDetailsService;
     }
 
-    @ModelAttribute("booksListFull")
-    public List<BookEntity> bookListFull() {
-        return bookService.getBooksData();
-    }
-
-    @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
-
-        return bookService.getTagListMap();
-    }
-
-    @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .max(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-    @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .min(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
 
 
     @ModelAttribute("searchWordDto")
@@ -88,44 +64,21 @@ public class AuthUserController {
         return new SearchWordDto();
     }
 
-    @ModelAttribute("searchResults")
-    public List<BookEntity> searchResults() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("searchResultsFull")
-    public List<BookEntity> searchResultsFull() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("popularBooks")
-    public List<BookEntity> popularAttrList() {
-        return authorService.converterBookListToListWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
-    }
-
 
     @GetMapping("/signin")
+    @CookieSearcher
     public String handleSignin(@CookieValue(value = "cartContents", required = false) String cartContents,
-                               @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+                               @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                               @CookieValue(value = "token", required = false) String token,Model model) {
 
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         return "signin.html";
     }
 
     @GetMapping("/signup")
-    public String handleSignUp(Model model) {
+    @CookieSearcher
+    public String handleSignUp(@CookieValue(value = "cartContents", required = false) String cartContents,
+                               @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                               @CookieValue(value = "token", required = false) String token,Model model) {
         model.addAttribute("regForm", new RegistrationForm());
         return "signup";
     }
@@ -170,15 +123,13 @@ public class AuthUserController {
     }
 
     @PostMapping("/reg")
-    public String handleUserRegistration(RegistrationForm registrationForm , @CookieValue(value = "cartContents", required = false) String cartContents,
-                                         @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+    @CookieSearcher
+    public String handleUserRegistration(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                         @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                                         @CookieValue(value = "token", required = false) String token,RegistrationForm registrationForm,
+                                         Model model) {
 
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
         userRegister.registerNewUser(registrationForm);
         model.addAttribute("regOk", true);
         return "signin.html";
@@ -244,29 +195,18 @@ public class AuthUserController {
     }
 
     @GetMapping("/my")
+    @CookieSearcher
     public String handleMy(@CookieValue(value = "cartContents", required = false) String cartContents,
-                           @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-        model.addAttribute("curUsr",userRegister.getCurrentUser());
-
+                           @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                           @CookieValue(value = "token", required = false) String token, Model model) {
         return "my";
     }
 
     @GetMapping("/profile")
+    @CookieSearcher
     public String handleProfile(@CookieValue(value = "cartContents", required = false) String cartContents,
-                                @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
-
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-        model.addAttribute("curUsr", userRegister.getCurrentUser());
+                                @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                                @CookieValue(value = "token", required = false) String token, Model model) {
         return "profile";
     }
 

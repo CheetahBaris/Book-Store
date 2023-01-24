@@ -54,71 +54,13 @@ public class BookShopCartController {
         this.jwtUtil = jwtUtil;
     }
 
-    @ModelAttribute("booksListFull")
-    public List<BookEntity> bookListFull() {
-        return bookService.getBooksData();
-    }
-
-    @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
-
-        return bookService.getTagListMap();
-    }
-
-    @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .max(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-    @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .min(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-
-
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
         return new SearchWordDto();
     }
 
-    @ModelAttribute("searchResults")
-    public List<BookEntity> searchResults() {
-        return new ArrayList<>();
-    }
 
-    @ModelAttribute("searchResultsFull")
-    public List<BookEntity> searchResultsFull() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("popularBooks")
-    public List<BookEntity> popularAttrList() {
-        return authorService.converterBookListToListWithAuthors(booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("authorsMap")
-    public Map<String, List<AuthorEntity>> authorsMap() {
-        return authorService.getAuthorsMap();
-    }
-
-    @ModelAttribute("Author")
-    public AuthorEntity getAuthor(String author) {
-        return authorService.findAuthorEntitiesByName(author);
-    }
     @ModelAttribute("isCartEmpty")
     public boolean getIsCartEmpty(boolean isCartEmpty){
         return isCartEmpty;
@@ -127,8 +69,8 @@ public class BookShopCartController {
 
     @GetMapping("/cart")
     public String handleCartRequest(@CookieValue(value = "cartContents", required = false) String cartContents,
-                                    @CookieValue(value = "token", required = false) String token,
                                     @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                                    @CookieValue(value = "token", required = false) String token,
                                     Model model) throws BookstoreApiWrongParameterException {
 
         if (cartContents == null || cartContents.length()<=1 ) {
@@ -179,8 +121,7 @@ public class BookShopCartController {
 
         if (cartContents != null && !cartContents.equals("")) {
             ArrayList<String> cookieBooks = new ArrayList<>(Arrays.asList(cartContents.split("/")));
-//            cookieBooks.clear();
-            cookieBooks.remove(slug);
+             cookieBooks.remove(slug);
             Cookie cookie = new Cookie("cartContents", String.join("/", cookieBooks));
             cookie.setPath("/");
             response.addCookie(cookie);

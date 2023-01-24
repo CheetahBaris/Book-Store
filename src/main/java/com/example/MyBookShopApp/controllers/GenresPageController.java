@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.annotations.CookieSearcher;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.BooksPageDto;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
@@ -44,30 +45,6 @@ public class GenresPageController {
     }
 
 
-    @ModelAttribute("booksListFull")
-    public List<BookEntity> bookListFull() {
-        return bookService.getBooksData();
-    }
-
-    @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
-
-        return bookService.getTagListMap();
-    }
-
-    @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .max(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-    @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .min(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
 
 
 
@@ -76,77 +53,33 @@ public class GenresPageController {
         return new SearchWordDto();
     }
 
-    @ModelAttribute("searchResults")
-    public List<BookEntity> searchResults() {
-        return new ArrayList<>();
-    }
 
-    @ModelAttribute("searchResultsFull")
-    public List<BookEntity> searchResultsFull() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("popularBooks")
-    public List<BookEntity> popularAttrList() {
-        return authorService.converterBookListToListWithAuthors(
-                booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
-    }
 
     @GetMapping("/genres")
-    public String getGenres(@CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
-                            @CookieValue(value = "postponedContents", required = false) String postponedContents,  Model model) {
-
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
+    @CookieSearcher
+    public String getGenres(@CookieValue(value = "cartContents", required = false) String cartContents,
+                            @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                            @CookieValue(value = "token", required = false) String token,  Model model) {
 
         model.addAttribute("GenresParentList", genreService.findGenreEntitiesByParentId(0L));
         model.addAttribute("AllGenresList", genreService.getAllGenres());
 
-        if(token != null){
 
-            model.addAttribute("curUsrStatus","authorized");
-            model.addAttribute("curUsr",userRegister.getCurrentUser());
-        }else {
-            model.addAttribute("curUsrStatus","unauthorized");
-            model.addAttribute("curUsr",null);
-        }
         return "/genres/index.html";
     }
 
     @GetMapping("books/genres")
-    public String getBooksByGenreSlug(@RequestParam(value = "genre", required = false) String genre,
-                                      @CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
-                                      @CookieValue(value = "postponedContents", required = false) String postponedContents, Model model) {
+    @CookieSearcher
+    public String getBooksByGenreSlug(@CookieValue(value = "cartContents", required = false) String cartContents,
+                                      @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                                      @CookieValue(value = "token", required = false) String token,
+                                      @RequestParam(value = "genre", required = false) String genre,Model model) {
 
 
         model.addAttribute("GenresList", authorService.converterBookListToListWithAuthors(
                 genreService.getBooksPageByGenre(genre, 0, 10), 0, 10));
         model.addAttribute("GenreTag", genre);
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
 
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-        if(token != null){
-
-            model.addAttribute("curUsrStatus","authorized");
-            model.addAttribute("curUsr",userRegister.getCurrentUser());
-        }else {
-            model.addAttribute("curUsrStatus","unauthorized");
-            model.addAttribute("curUsr",null);
-        }
 
         return "/genres/slug.html";
     }

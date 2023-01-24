@@ -1,5 +1,6 @@
 package com.example.MyBookShopApp.controllers;
 
+import com.example.MyBookShopApp.annotations.CookieSearcher;
 import com.example.MyBookShopApp.data.ResourceStorage;
 import com.example.MyBookShopApp.data.book.BookEntity;
 import com.example.MyBookShopApp.data.dto.SearchWordDto;
@@ -61,74 +62,22 @@ public class BooksPageController {
     }
 
 
-    @ModelAttribute("booksListFull")
-    public List<BookEntity> bookListFull() {
-        return bookService.getBooksData();
-    }
-
-    @ModelAttribute("tagListMap")
-    public Map<String, List<BookEntity>> tagListMap() throws BookstoreApiWrongParameterException {
-
-        return bookService.getTagListMap();
-    }
-
-    @ModelAttribute("tagListMapLgSize")
-    public Integer tagListMapLg() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .max(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-    @ModelAttribute("tagListMapXsSize")
-    public Integer tagListMapXs() throws BookstoreApiWrongParameterException {
-        List<BookEntity> bigList = bookService.getTagListMap().values().stream()
-                .min(Comparator.comparing(List::size)).get();
-        return bigList.size();
-    }
-
-
-
-
 
     @ModelAttribute("searchWordDto")
     public SearchWordDto searchWordDto() {
         return new SearchWordDto();
     }
 
-    @ModelAttribute("searchResults")
-    public List<BookEntity> searchResults() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("searchResultsFull")
-    public List<BookEntity> searchResultsFull() {
-        return new ArrayList<>();
-    }
-
-    @ModelAttribute("popularBooks")
-    public List<BookEntity> popularAttrList() {
-        return authorService.converterBookListToListWithAuthors(
-                booksRatingAndPopularityService.getBookByRelevanceDesc(0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("recentBooks")
-    public List<BookEntity> recentAttrList() throws ParseException, BookstoreApiWrongParameterException {
-        LocalDate fromDateRecent = LocalDate.parse(LocalDate.parse("2002-05-21").format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalDate endDateRecent =LocalDate.parse(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-        return authorService.converterBookListToListWithAuthors(bookService.findBookByPubDateBetween(fromDateRecent, endDateRecent, 0, 6).getContent(), 0, 6);
-    }
-
-    @ModelAttribute("slugBook")
-    private BookEntity getSlugBook(String slug) throws BookstoreApiWrongParameterException {
-        return bookService.getBookBySlug(slug);
-    }
 
 
     @GetMapping("/{slug}")
-    public String bookPage(@PathVariable("slug") String slug,@CookieValue(value = "token", required = false) String token,@CookieValue(value = "cartContents", required = false) String cartContents,
-                           @CookieValue(value = "postponedContents", required = false) String postponedContents,  Model model) throws BookstoreApiWrongParameterException {
-        getSlugBook(slug);
+    @CookieSearcher
+    public String bookPage(@CookieValue(value = "cartContents", required = false) String cartContents,
+                           @CookieValue(value = "postponedContents", required = false) String postponedContents,
+                           @CookieValue(value = "token", required = false) String token,
+                           @PathVariable("slug") String slug,  Model model) throws BookstoreApiWrongParameterException {
+
+        model.addAttribute("slugBook",bookService.getBookBySlug(slug));
         model.addAttribute("slugBook", bookService.getBookBySlug(slug));
         model.addAttribute("slugBookRatingGrade",
                 booksRatingAndPopularityService.getBookRatingGradeBySlug(slug));
@@ -143,22 +92,6 @@ public class BooksPageController {
 
         model.addAttribute("likes", booksRatingAndPopularityService.getAmountOfLikes(slug));
         model.addAttribute("dislikes", booksRatingAndPopularityService.getAmountOfDislikes(slug));
-
-        String[]  cookiePostponedSlugs = postponedContents!=null ? (postponedContents.isEmpty()? null : postponedContents.split("/")) : null;
-        String[] cookieCartSlugs = cartContents!=null? (cartContents.isEmpty()?null : cartContents.split("/")):null;
-
-
-        model.addAttribute("postponedSize",cookiePostponedSlugs!=null?cookiePostponedSlugs.length:null);
-        model.addAttribute("cartSize",cookieCartSlugs!=null?cookieCartSlugs.length:null);
-        if(token != null){
-
-            model.addAttribute("curUsrStatus","authorized");
-            model.addAttribute("curUsr",userRegister.getCurrentUser());
-        }else {
-            model.addAttribute("curUsrStatus","unauthorized");
-            model.addAttribute("curUsr",null);
-        }
-
         return "books/slug.html";
     }
     @PostMapping("/changeBookStatus")
